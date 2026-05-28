@@ -82,9 +82,9 @@ export const nav = [
     label: "About Us",
     path: "/about-us/",
     children: [
-      { label: "Who are we?", path: "/about-us-accountants-in-hampshire-west-sussex/" },
-      { label: "Meet the Team", path: "/lewis-brownlee-team-west-sussex-and-accountancy-experts/" },
-      { label: "Careers", path: "/careers-3/" },
+      { label: "Who are we?", path: "/who-we-are/" },
+      { label: "Meet the Team", path: "/meet-the-team/" },
+      { label: "Careers", path: "/careers/" },
       { label: "Corporate and Social Responsibility", path: "/corporate-and-social-responsibility/" }
     ]
   },
@@ -328,21 +328,21 @@ export const standalonePages = [
     image: site.images.office
   },
   {
-    path: "/about-us-accountants-in-hampshire-west-sussex/",
+    path: "/who-we-are/",
     title: "Who are we?",
     subtitle: "A modern accountancy practice built around clarity, useful advice and responsive service.",
     type: "about",
     image: site.images.office
   },
   {
-    path: "/lewis-brownlee-team-west-sussex-and-accountancy-experts/",
+    path: "/meet-the-team/",
     title: "Meet our Team",
     subtitle: "Introducing the people behind the portfolio practice.",
     type: "team",
     image: site.images.team
   },
   {
-    path: "/careers-3/",
+    path: "/careers/",
     title: "Careers",
     subtitle: "A supportive place to learn, qualify and do work you can be proud of.",
     type: "careers",
@@ -592,6 +592,45 @@ export const standalonePages = [
     subtitle: "A preserved URL placeholder so copied navigation routes do not 404.",
     type: "thank-you",
     image: site.images.office
+  },
+  {
+    path: "/blog/making-tax-digital-for-income-tax/",
+    title: "Making Tax Digital for Income Tax: Your April 2026 Checklist",
+    subtitle: "What sole traders and landlords with income over £50,000 need to do before April 2026.",
+    type: "blog-article",
+    image: site.images.cloud,
+    content: {
+      date: "May 2026",
+      category: "MTD",
+      intro: "From 6 April 2026, Making Tax Digital for Income Tax (MTD for IT) applies to sole traders and landlords whose qualifying income exceeds £50,000. If you have not yet chosen compatible software, reviewed your records workflow, or spoken to your accountant, this guide sets out the practical steps.",
+      sections: [
+        {
+          heading: "Who is affected from April 2026?",
+          body: "HMRC uses your most recent Self Assessment return to identify who falls into scope. If your combined self-employment and property income exceeded £50,000 in the 2024 to 2025 tax year, you are likely in the first wave. HMRC will write to eligible taxpayers, but waiting for that letter is not a preparation strategy."
+        },
+        {
+          heading: "What Making Tax Digital for Income Tax actually changes",
+          body: "You must keep digital records, send four quarterly updates to HMRC each year, and submit a final declaration at the close of each tax year. The quarterly updates are new obligations — they do not replace anything currently required by Self Assessment. The final declaration replaces the annual return. Late or missing quarterly updates generate penalty points under the new points-based penalty system."
+        },
+        {
+          heading: "Your April 2026 preparation checklist",
+          body: "Choose and set up MTD-compatible software — Xero, QuickBooks, FreeAgent and others are approved by HMRC. Connect your bank feeds to the software. Separate business and personal transactions from the start of the 2026 to 2027 tax year. Agree a quarterly review and submission workflow with your accountant. Check that your current bookkeeping produces categorised data throughout the year, not something reconstructed in January."
+        },
+        {
+          heading: "What happens if you miss a quarterly update?",
+          body: "HMRC introduced a points-based penalty system alongside MTD. Each missed quarterly update adds one point. When you reach the threshold — four points for quarterly filers — a £200 financial penalty applies. Further missed submissions add further penalties. Points reset after a period of sustained compliance, but the practical approach is not to accumulate them in the first place."
+        },
+        {
+          heading: "How Crestfield Advisory can help",
+          body: "Crestfield Advisory can review your current records, recommend compatible software, set up your first quarterly workflow and handle submissions alongside your annual tax position. If you are in scope from April 2026, the practical preparation work starts now — not in March."
+        }
+      ],
+      sources: [
+        { label: "GOV.UK — Making Tax Digital for Income Tax collection", url: "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax" },
+        { label: "HMRC — Check if you need to use MTD for Income Tax", url: "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax" },
+        { label: "GOV.UK — Late submission penalty reform", url: "https://www.gov.uk/government/publications/income-tax-self-assessment-and-partnerships-late-submission-and-late-payment-penalties" }
+      ]
+    }
   }
 ];
 
