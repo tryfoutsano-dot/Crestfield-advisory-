@@ -27,7 +27,7 @@ export const site = {
     cloud: image("photo-1551288049-bebda4e38f71", "1600"),
     planning: image("photo-1551836022-d5d88e9218df", "1600"),
     career: image("photo-1521737711867-e3b97375f902", "1600"),
-    finance: image("photo-1554224154-26032fced8bd", "1600"),
+    finance: image("photo-1579621970563-ebec7560ff3e", "1600"),
     payroll: "/assets/payroll.webp"
   }
 };
