@@ -947,15 +947,33 @@ function renderAboutOverviewPage(page) {
 function renderServicesOverviewPage(page) {
   const serviceMenu = nav.find((item) => item.label === "Services");
   const serviceByPath = new Map(servicePages.map((servicePage) => [servicePage.path, servicePage]));
-  const sectionNotes = {
-    "Advisory & Growth": "Planning, forecasting and senior finance support for businesses that want clearer decisions and stronger margins.",
-    Tax: "Business and personal tax pages grouped together so visitors can quickly find the right specialist advice.",
-    "Accounts & Operations": "Day-to-day finance operations, cloud accounting, annual accounts and payroll support in one section.",
-    "Audit & Specialist": "Assurance, probate and sector-specific services for organisations with specialist compliance needs."
+
+  const sectionMeta = {
+    "Advisory & Growth": {
+      note: "Planning, forecasting and senior finance support for businesses that want clearer decisions and stronger margins. Our advisers work alongside owners and boards at the points where commercial judgment matters most.",
+      image: site.images.planning,
+      alt: "Business planning and advisory"
+    },
+    Tax: {
+      note: "Business and personal tax handled proactively. We plan ahead, identify available reliefs and manage filings accurately across every area — from corporation tax and R&D credits to personal returns and estate planning.",
+      image: site.images.finance,
+      alt: "Tax planning and compliance"
+    },
+    "Accounts & Operations": {
+      note: "Day-to-day financial operations, cloud accounting, annual accounts and payroll support in one team. We use Xero and QuickBooks to keep reporting timely, accurate and useful for the decisions you need to make.",
+      image: site.images.laptop,
+      alt: "Cloud accounting and bookkeeping operations"
+    },
+    "Audit & Specialist": {
+      note: "Assurance, probate and sector-specific work for organisations with specialist compliance and reporting needs. From statutory audit to solicitors accounts rules and agricultural accounting, we bring the right expertise to each engagement.",
+      image: site.images.audit,
+      alt: "Audit, assurance and specialist services"
+    }
   };
+
   const serviceGroups = serviceMenu.children.map((group) => ({
     ...group,
-    note: sectionNotes[group.label] || "Specialist services grouped for easier browsing.",
+    ...(sectionMeta[group.label] || { note: "Specialist services grouped for easier browsing.", image: site.images.office, alt: "Services" }),
     items: group.children.map((item) => ({
       ...item,
       service: serviceByPath.get(item.path)
@@ -964,42 +982,48 @@ function renderServicesOverviewPage(page) {
 
   return `
     ${renderPageHero(page)}
-    <section class="section section-white services-intro">
+
+    <section class="section section-navy">
       <div class="container center">
         <p class="eyebrow">Our services</p>
-        <h2>Four clear service families</h2>
-        <p class="lead">Each section below matches the dropdown menu: choose a service family, then open the individual service page you need.</p>
+        <h2>Everything your business needs in one practice</h2>
+        <p class="lead" style="max-width:680px;margin:0 auto">From first-year accounts to complex audit assurance, we cover the full range of financial and advisory work, structured into four clear families so you can find the right specialist quickly.</p>
       </div>
     </section>
-    ${serviceGroups
-      .map(
-        (group, index) => `
-          <section class="section service-family-section ${index % 2 ? "section-paper" : "section-white"}">
-            <div class="container service-family">
-              <div class="service-family-heading">
-                <span class="service-family-number">${String(index + 1).padStart(2, "0")}</span>
-                <p class="eyebrow">Service family</p>
+
+    ${serviceGroups.map((group, index) => {
+      const isReverse = index % 2 === 1;
+      const bg = index % 2 === 0 ? "section-white" : "section-paper";
+      const numLabel = String(index + 1).padStart(2, "0");
+      return `
+        <section class="section ${bg} service-family-section">
+          <div class="container">
+            <div class="split${isReverse ? " reverse" : ""}" style="margin-bottom:46px;align-items:start">
+              <div>
+                <span class="service-family-number">${numLabel}</span>
+                <p class="eyebrow" style="margin-top:18px">Service family</p>
                 <h2>${group.label}</h2>
-                <p>${group.note}</p>
+                <p style="color:var(--muted);font-size:18px;line-height:1.6">${group.note}</p>
               </div>
-              <div class="service-family-grid">
-                ${group.items
-                  .map(
-                    (item) => `
-                      <a class="service-overview-card" href="${item.path}">
-                        <span class="service-card-title">${item.label}</span>
-                        <span class="service-card-copy">${item.service?.subtitle || "Open this service page for more detail."}</span>
-                        <span class="service-card-action">View service</span>
-                      </a>
-                    `
-                  )
-                  .join("")}
+              <div class="split-media">
+                <img src="${group.image}" alt="${group.alt}" loading="lazy">
               </div>
             </div>
-          </section>
-        `
-      )
-      .join("")}
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+              ${group.items.map((item) => `
+                <a class="service-overview-card" href="${item.path}">
+                  <span class="service-card-title">${item.label}</span>
+                  <span class="service-card-copy">${item.service?.subtitle || "Open this service page for more detail."}</span>
+                  <span class="service-card-action">View service &rarr;</span>
+                </a>
+              `).join("")}
+            </div>
+          </div>
+        </section>
+      `;
+    }).join("")}
+
+    ${renderCtaSection()}
   `;
 }
 

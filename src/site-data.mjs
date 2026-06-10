@@ -1566,7 +1566,7 @@ export const standalonePages = [
     title: "Services",
     subtitle: "All accountancy, advisory, tax, audit, payroll and specialist-sector services in one place.",
     type: "services-overview",
-    image: site.images.finance
+    image: site.images.planning
   },
   {
     path: "/reviews/",
