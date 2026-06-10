@@ -1,8 +1,8 @@
 https://portfolio.example/
 https://portfolio.example/about-us/
-https://portfolio.example/about-us-accountants-in-hampshire-west-sussex/
-https://portfolio.example/lewis-brownlee-team-west-sussex-and-accountancy-experts/
-https://portfolio.example/careers-3/
+https://portfolio.example/who-we-are/
+https://portfolio.example/meet-the-team/
+https://portfolio.example/careers/
 https://portfolio.example/corporate-and-social-responsibility/
 https://portfolio.example/services/
 https://portfolio.example/reviews/
@@ -20,6 +20,10 @@ https://portfolio.example/resources-2/tax-rates-and-allowances/
 https://portfolio.example/resources-2/downloadable-forms/
 https://portfolio.example/job-application-form/
 https://portfolio.example/new-client-information-request/
+https://portfolio.example/payroll-starter-checklist/
+https://portfolio.example/bookkeeping-handover-checklist/
+https://portfolio.example/vat-records-checklist/
+https://portfolio.example/probate-information-request/
 https://portfolio.example/thank-you/
 https://portfolio.example/newsletter-sign-up-completion/
 https://portfolio.example/50-ways-to-grow-your-business-guide/
@@ -38,6 +42,13 @@ https://portfolio.example/xero-login/
 https://portfolio.example/dext-login/
 https://portfolio.example/quickbooks-online-login/
 https://portfolio.example/mhmm-menu-layout-loader/
+https://portfolio.example/blog/making-tax-digital-for-income-tax/
+https://portfolio.example/resources-2/news-and-reports/planning-ahead-for-payroll-benefits/
+https://portfolio.example/resources-2/news-and-reports/mileage-rates-and-business-travel-records/
+https://portfolio.example/resources-2/news-and-reports/key-dates-tax-calendar-2026/
+https://portfolio.example/resources-2/news-and-reports/preparing-accounts-before-a-funding-conversation/
+https://portfolio.example/resources-2/news-and-reports/month-end-reporting-pack-checklist/
+https://portfolio.example/resources-2/news-and-reports/vat-review-points-before-submitting-a-return/
 https://portfolio.example/profit-improvement/
 https://portfolio.example/strategic-business-planning/
 https://portfolio.example/corporate-finance/

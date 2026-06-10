@@ -1,0 +1,7 @@
+{
+  "buildCommand": "node scripts/build-site.mjs",
+  "outputDirectory": ".",
+  "installCommand": "echo 'no install needed'",
+  "cleanUrls": true,
+  "trailingSlash": true
+}

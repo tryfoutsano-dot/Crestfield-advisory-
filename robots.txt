@@ -1,0 +1,37 @@
+User-agent: *
+
+# Allow all main content
+Allow: /
+
+# Block utility and login pages - no value for search engines
+Disallow: /mhmm-menu-layout-loader/
+Disallow: /thank-you/
+Disallow: /newsletter-sign-up-completion/
+Disallow: /logins/
+Disallow: /dext-login/
+Disallow: /xero-login/
+Disallow: /quickbooks-online-login/
+Disallow: /client-portal/
+Disallow: /job-application-form/
+Disallow: /new-client-information-request/
+
+# Block blog category archive pages (thin/duplicate content)
+Disallow: /accounting-blog-category/
+Disallow: /business-blog-category/
+Disallow: /lb-news-blog-category/
+Disallow: /national-insurance-blog-category/
+Disallow: /news-blog-category/
+Disallow: /other-blog-category/
+Disallow: /payroll-blog-category/
+Disallow: /pension-blog-category/
+Disallow: /property-blog-category/
+Disallow: /tax-blog-category/
+Disallow: /vat-blog-category/
+Disallow: /xero-blog-category/
+
+# Block assets that shouldn't be crawled
+Disallow: /assets/*.css
+Disallow: /assets/*.js
+
+# Sitemap location
+Sitemap: https://crestfield.example/sitemap.xml

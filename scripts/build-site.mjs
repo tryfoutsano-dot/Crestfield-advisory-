@@ -5,6 +5,7 @@ import {
   calculatorPages,
   heroSlides,
   nav,
+  newsArticles,
   offices,
   pages,
   resourceCards,
@@ -15,6 +16,12 @@ import {
 } from "../src/site-data.mjs";
 
 const root = process.cwd();
+
+const canonicals = {
+  "/xero-cloud-accounting-experts/": "/xero-cloud-accounting-experts-2/",
+  "/probate/": "/probate-services/",
+  "/whiteley-accountants/": "/whiteley-office/"
+};
 
 const escapeHtml = (value = "") =>
   String(value)
@@ -27,13 +34,36 @@ const normalize = (path) => (path || "/").split("#")[0];
 const isActive = (current, path) => normalize(current) === normalize(path);
 const heroStyle = (image) => `style="--hero-image:url('${escapeHtml(image || site.images.office)}')"`;
 
+function removeVisibleDashes(html) {
+  let output = "";
+  let inTag = false;
+
+  for (const char of html) {
+    if (char === "<") inTag = true;
+
+    if (!inTag && (char === "-" || char === "–" || char === "—")) {
+      output += " ";
+    } else {
+      output += char;
+    }
+
+    if (char === ">") inTag = false;
+  }
+
+  return output
+    .replaceAll("&ndash;", " ")
+    .replaceAll("&mdash;", " ")
+    .replaceAll("&#8211;", " ")
+    .replaceAll("&#8212;", " ");
+}
+
 function renderHeader(currentPath) {
   return `
     <div class="topbar">
       <a href="tel:${site.phone.replaceAll(" ", "")}">${site.phone}</a>
       <a href="mailto:${site.email}">${site.email}</a>
-      <a class="social" href="#" aria-label="Facebook">F</a>
-      <a class="social" href="#" aria-label="X">X</a>
+      <a class="social" href="${site.social.linkedin}" aria-label="LinkedIn" rel="noopener noreferrer">in</a>
+      <a class="social" href="${site.social.twitter}" aria-label="X (Twitter)" rel="noopener noreferrer">X</a>
     </div>
     <header class="main-header">
       <a class="logo" href="/" aria-label="${site.brand} home">
@@ -95,14 +125,14 @@ function renderMegaColumn(item) {
 
 function renderFooter() {
   const newsLinks = [
-    "Planning ahead for payroll benefits",
-    "Mileage rates and business travel records",
-    "Three checks before your next VAT return"
+    ["Planning ahead for payroll benefits", "/resources-2/news-and-reports/planning-ahead-for-payroll-benefits/"],
+    ["Mileage rates and business travel records", "/resources-2/news-and-reports/mileage-rates-and-business-travel-records/"],
+    ["Key dates: tax calendar 2026", "/resources-2/news-and-reports/key-dates-tax-calendar-2026/"]
   ];
   const blogLinks = [
-    "What a useful month-end pack includes",
-    "Cloud accounting clean-up checklist",
-    "When to ask for assurance before funding"
+    ["Making Tax Digital for Income Tax: Your April 2026 Checklist", "/blog/making-tax-digital-for-income-tax/"],
+    ["What a useful month-end pack includes", "/blog/"],
+    ["Cloud accounting clean-up checklist", "/blog/"]
   ];
 
   return `
@@ -116,16 +146,16 @@ function renderFooter() {
               <span class="logo-sub">${site.descriptor}</span>
             </span>
           </a>
-          <p style="margin-top:18px;color:rgba(255,255,255,.74)">${site.strapline}. This is a portfolio demonstration site using placeholder contact details.</p>
+          <p style="margin-top:18px;color:rgba(255,255,255,.74)">${site.strapline}. Portfolio website using sample contact details.</p>
           <a class="btn btn-copper" href="/contact-us/#contact">Get in touch</a>
         </div>
         <div>
           <h3>News</h3>
-          <ul>${newsLinks.map((title) => `<li><a href="/resources-2/news-and-reports/">${title}</a></li>`).join("")}</ul>
+          <ul>${newsLinks.map(([title, path]) => `<li><a href="${path}">${title}</a></li>`).join("")}</ul>
         </div>
         <div>
           <h3>Blog</h3>
-          <ul>${blogLinks.map((title) => `<li><a href="/blog/">${title}</a></li>`).join("")}</ul>
+          <ul>${blogLinks.map(([title, path]) => `<li><a href="${path}">${title}</a></li>`).join("")}</ul>
         </div>
         <div>
           <h3>Useful Links</h3>
@@ -138,7 +168,7 @@ function renderFooter() {
         </div>
       </div>
       <div class="footer-bottom">
-        © ${site.year}. ${site.brand}. Portfolio concept only. Registered office: ${site.address}. No real client data, contact data or regulated advice is provided by this demo.
+        © ${site.year}. ${site.brand}. Portfolio concept only. Registered office: ${site.address}. No real client data, contact data or regulated advice is provided.
       </div>
     </footer>
   `;
@@ -203,7 +233,7 @@ function renderHome() {
             `
           )
           .join("")}
-        <a class="btn" href="/contact-us/#contact">Lets Talk</a>
+        <a class="btn" href="/contact-us/#contact">Let's Talk</a>
       </div>
     </section>
 
@@ -211,7 +241,7 @@ function renderHome() {
       <div class="narrow center">
         <h2>Welcome to ${site.brand}</h2>
         <p class="lead">Your expert accountants, tax advisers and business partners for growing organisations.</p>
-        <p>We support founders, owner-managed businesses, charities and private clients with joined-up accounting, audit, tax and advisory services. The focus is simple: reliable numbers, thoughtful advice and practical support that helps you move with confidence.</p>
+        <p>We support founders, owner-managed businesses, charities and private clients with joined-up accounting, audit, tax and advisory services. The focus is simple: reliable numbers, sound advice and support that helps you move with confidence.</p>
         <p>Every engagement starts with listening. From cloud bookkeeping to complex assurance work, we shape the scope around what you need today and what you are trying to build next.</p>
       </div>
     </section>
@@ -228,7 +258,7 @@ function renderHome() {
             .map(
               ([title, img, copy]) => `
                 <article class="why-item">
-                  <img src="${img}" alt="">
+                  <img src="${img}" alt="${title}" loading="lazy">
                   <h3>${title}</h3>
                   <p>${copy}</p>
                 </article>
@@ -244,7 +274,7 @@ function renderHome() {
         <div>
           <p class="eyebrow">Tea, coffee or a quick video call?</p>
           <h2>Book a Meeting</h2>
-          <p class="lead">Use the demo form to show how a portfolio client journey could start. The form does not send real messages.</p>
+          <p class="lead">Use the form to outline what you need. For this portfolio version, it shows a local confirmation message only.</p>
           ${renderOfficeList()}
         </div>
         ${renderContactForm()}
@@ -266,34 +296,35 @@ function renderPageHero(page) {
 }
 
 function renderServicePage(page) {
+  const contactUrl = `/contact-us/?service=${encodeURIComponent(page.area)}#contact`;
   return `
     ${renderPageHero(page)}
     <section class="section section-white">
       <div class="container split">
         <div>
           <p class="eyebrow">${page.area}</p>
-          <h2>Practical advice, clear process and useful outcomes</h2>
+          <h2>${page.heading}</h2>
           <p class="lead">${page.subtitle}</p>
-          <p>We designed this page to preserve the same service-page purpose as the reference site while using original wording. It explains the problem, shows what the firm does differently and gives visitors a clear next step.</p>
+          <p>${page.body}</p>
           <ul class="check-list">
             ${page.features.map((feature) => `<li>${feature}</li>`).join("")}
           </ul>
-          <a class="btn btn-copper" href="/contact-us/#contact">Contact our specialists</a>
+          <a class="btn btn-copper" href="${contactUrl}">Talk to a specialist</a>
         </div>
         <div class="split-media">
-          <img src="${page.image}" alt="">
+          <img src="${page.image}" alt="${page.title} advisory services" loading="lazy">
         </div>
       </div>
     </section>
     <section class="section section-paper">
       <div class="container center">
-        <p class="eyebrow">What makes us different?</p>
-        <h2>Senior input without the slow machinery</h2>
+        <p class="eyebrow">How we work</p>
+        <h2>What to expect when you work with us</h2>
         <div class="feature-grid">
           ${[
-            ["Commercial focus", "We look at the numbers in context, so recommendations connect to cash, margin, risk and growth."],
-            ["Plain-English communication", "You get clear milestones, clear responsibilities and advice you can actually use."],
-            ["Technology friendly", "Cloud systems, clean data and well-designed reporting reduce admin and improve decisions."]
+            ["Senior-led throughout", "The person who scopes the engagement is the person who does the work. No handoffs to junior staff."],
+            ["Straightforward advice", "Recommendations are explained in language that supports decisions and technical compliance."],
+            ["Early planning", "We raise planning points and flag issues while there is still time to act."]
           ]
             .map(([title, copy]) => `<article class="feature-card"><h3>${title}</h3><p>${copy}</p></article>`)
             .join("")}
@@ -305,9 +336,9 @@ function renderServicePage(page) {
         <div class="cta-band">
           <div>
             <h2>Ready to make the next step?</h2>
-            <p>Book a no-pressure introductory meeting using placeholder details for this portfolio build.</p>
+            <p>Book an introductory meeting using the sample contact details on this portfolio site.</p>
           </div>
-          <a class="btn btn-light" href="/contact-us/#contact">Book a meeting</a>
+          <a class="btn btn-light" href="${contactUrl}">Book a meeting</a>
         </div>
       </div>
     </section>
@@ -322,10 +353,10 @@ function renderAboutPage(page) {
         <div>
           <p class="eyebrow">Our heritage</p>
           <h2>Experienced, modern and deliberately approachable</h2>
-          <p>This portfolio practice has been written as an original alternative to the reference site: the same broad accountancy proposition, but with new naming, placeholder contact data and fresh copy.</p>
-          <p>Its story is built around a regional firm that grew from compliance work into advisory, cloud accounting, audit and specialist tax support. The goal is to feel established without pretending to be the real company.</p>
+          <p>This portfolio practice presents a regional accountancy firm with a broad advisory, tax and audit proposition. The naming, contact details and copy are original to this build.</p>
+          <p>The story is built around a firm that grew from compliance work into advisory, cloud accounting, audit and specialist tax support.</p>
         </div>
-        <div class="split-media"><img src="${site.images.office}" alt=""></div>
+        <div class="split-media"><img src="${site.images.office}" alt="Crestfield Advisory office" loading="lazy"></div>
       </div>
     </section>
     <section class="section section-paper">
@@ -333,10 +364,10 @@ function renderAboutPage(page) {
         <div>
           <p class="eyebrow">How we can help</p>
           <h2>All the core services under one roof</h2>
-          <p>From personal tax reviews to cloud bookkeeping and audit assurance, the site presents a joined-up advisory firm for businesses and individuals who want calm, useful financial support.</p>
+          <p>From personal tax reviews to cloud bookkeeping and audit assurance, the site presents a joined-up advisory firm for businesses and individuals who want reliable financial support.</p>
           <a class="btn btn-copper" href="/contact-us/#contact">Book a free introductory meeting</a>
         </div>
-        <div class="split-media"><img src="${site.images.meeting}" alt=""></div>
+        <div class="split-media"><img src="${site.images.meeting}" alt="Team meeting at Crestfield Advisory" loading="lazy"></div>
       </div>
     </section>
     ${renderCtaSection()}
@@ -357,7 +388,7 @@ function renderTeamPage(page) {
           .map(
             (member) => `
               <article class="team-card">
-                <img src="${member.image}" alt="${member.name}">
+                <img src="${member.image}" alt="${member.name}" loading="lazy">
                 <div class="team-card-body">
                   <p>${member.role}</p>
                   <h3>${member.name}</h3>
@@ -376,7 +407,7 @@ function renderCareersPage(page) {
   const values = [
     ["Quality Service", "Reliable work, thoughtful review and high standards."],
     ["Enthusiasm", "A team culture that treats learning as part of the work."],
-    ["Smart Working", "Cloud tools, flexible habits and practical processes."],
+    ["Smart Working", "Cloud tools, flexible habits and efficient processes."],
     ["Teamwork", "Direct support from colleagues who share knowledge openly."]
   ];
 
@@ -387,10 +418,10 @@ function renderCareersPage(page) {
         <div>
           <p class="eyebrow">Careers with ${site.brand}</p>
           <h2>Work that develops your judgement</h2>
-          <p>We have kept the shape of the careers page: introduction, staff testimonials, values and a call to apply. The copy is rewritten for a portfolio demo.</p>
-          <p>Team members get mentoring, varied client work, study support and a culture that values calm communication as much as technical detail.</p>
+          <p>The careers page introduces the team culture, values and application route in a simple way.</p>
+          <p>Team members get mentoring, varied client work, study support and a culture that values good communication as much as technical detail.</p>
         </div>
-        <div class="split-media"><img src="${site.images.career}" alt=""></div>
+        <div class="split-media"><img src="${site.images.career}" alt="Working at Crestfield Advisory" loading="lazy"></div>
       </div>
     </section>
     <section class="section section-paper">
@@ -399,10 +430,10 @@ function renderCareersPage(page) {
         <div class="feature-grid">
           ${[
             "I wanted a place where I could learn properly and still feel like a person.",
-            "The best part is having people around me who explain the why, not just the task.",
+            "The best part is having people around me who explain the reason behind the task.",
             "The work is varied, the standards are high and support is easy to ask for."
           ]
-            .map((quote) => `<article class="feature-card"><h3>“${quote}”</h3></article>`)
+            .map((quote) => `<article class="feature-card"><h3>"${quote}"</h3></article>`)
             .join("")}
         </div>
       </div>
@@ -414,7 +445,7 @@ function renderCareersPage(page) {
         <div class="feature-grid">
           ${values.map(([title, copy]) => `<article class="feature-card"><h3>${title}</h3><p>${copy}</p></article>`).join("")}
         </div>
-        <div style="margin-top:34px"><a class="btn btn-light" href="/job-application-form/">View demo application form</a></div>
+        <div style="margin-top:34px"><a class="btn btn-light" href="/job-application-form/">View application form</a></div>
       </div>
     </section>
   `;
@@ -422,8 +453,8 @@ function renderCareersPage(page) {
 
 function renderReviewsPage(page) {
   const reviews = [
-    ["A calm extension of our finance team", "They translated our messy management accounts into a rhythm the directors could actually use."],
-    ["Clear, responsive and practical", "The advice was technical when it needed to be, but never wrapped in jargon."],
+    ["A reliable extension of our finance team", "They turned our management accounts into a reporting routine the directors could actually use."],
+    ["Responsive and easy to work with", "The advice was technical when it needed to be, but never wrapped in jargon."],
     ["Helpful during a funding round", "The audit preparation and forecasts gave our lenders confidence at exactly the right moment."]
   ];
   return `
@@ -446,8 +477,8 @@ function renderContactPage(page) {
     <section class="section section-white">
       <div class="container">
         <p class="eyebrow">Contact us today</p>
-        <h2>By phone, email or the demo form</h2>
-        <p class="lead">All contact details are placeholders for portfolio use. No real enquiry is submitted.</p>
+        <h2>By phone, email or the contact form</h2>
+        <p class="lead">All contact details are sample details for portfolio use. No real enquiry is submitted.</p>
       </div>
     </section>
     <section class="section section-paper" id="contact">
@@ -476,7 +507,8 @@ function renderResourcesPage(page) {
     <section class="section section-white">
       <div class="container center">
         <p class="eyebrow">Library & resources</p>
-        <h2>Tools, explainers and reference pages</h2>
+        <h2>Choose the resource you need</h2>
+        <p class="lead">This is the main resource hub. Calculators, factsheets, forms, news and tax dates each have their own section.</p>
         <div class="resource-grid" style="margin-top:38px">
           ${resourceCards.map((card) => renderResourceCard(card)).join("")}
         </div>
@@ -485,11 +517,273 @@ function renderResourcesPage(page) {
   `;
 }
 
+function renderNewsReportsPage(page) {
+  return `
+    ${renderPageHero(page)}
+    <section class="section section-white">
+      <div class="container center">
+        <p class="eyebrow">News & reports</p>
+        <h2>Updates for business owners and finance teams</h2>
+        <p class="lead">Recent notes on tax deadlines, payroll, reporting and business records.</p>
+      </div>
+      <div class="container blog-grid" style="margin-top:38px">
+        ${newsArticles
+          .map(
+            (article) => `
+              <article class="blog-card">
+                <p class="eyebrow">${article.content.category}</p>
+                <h3>${article.title}</h3>
+                <p style="font-weight:800;color:var(--muted)">${article.content.date}</p>
+                <p>${article.content.summary}</p>
+                <a href="${article.path}">Read article</a>
+              </article>
+            `
+          )
+          .join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderFactsheetsPage(page) {
+  const factsheets = [
+    { title: "VAT registration", copy: "When registration may be required, what records to keep and how to prepare for the first return.", path: "/vat-advice/" },
+    { title: "Director loan accounts", copy: "How overdrawn loan accounts arise and why they should be reviewed before the company year end.", path: "/business-tax/" },
+    { title: "Payroll year-end", copy: "The main payroll checks before P60s, benefits reporting and the first pay run of the new tax year.", path: "/payroll/" },
+    { title: "Making Tax Digital", copy: "What digital records, quarterly updates and final declarations mean for sole traders and landlords.", path: "/making-tax-digital/" },
+    { title: "Capital allowances", copy: "A guide to plant, equipment, annual investment allowance and timing points for business purchases.", path: "/business-tax/" },
+    { title: "Management accounts", copy: "What a useful monthly reporting pack should show and how directors can use it in board meetings.", path: "/bookkeeping/" }
+  ];
+
+  return `
+    ${renderPageHero(page)}
+    <section class="section section-white">
+      <div class="container center">
+        <p class="eyebrow">Factsheets</p>
+        <h2>Short guides by topic</h2>
+        <p class="lead">Use these summaries as a starting point before speaking to an adviser about your exact circumstances.</p>
+      </div>
+      <div class="container resource-grid" style="margin-top:38px">
+        ${factsheets
+          .map(
+            (item) => `
+              <article class="resource-card">
+                <h3>${item.title}</h3>
+                <p>${item.copy}</p>
+                <a class="btn btn-copper" href="${item.path}">Open related guide</a>
+              </article>
+            `
+          )
+          .join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderFormsPage(page) {
+  const forms = [
+    { title: "New client information request", path: "/new-client-information-request/", copy: "Basic business, contact and service information for a prospective client." },
+    { title: "Job application form", path: "/job-application-form/", copy: "A simple application route for careers enquiries." },
+    { title: "Payroll starter checklist", path: "/payroll-starter-checklist/", copy: "Details needed before adding a new employee to payroll." },
+    { title: "Bookkeeping handover checklist", path: "/bookkeeping-handover-checklist/", copy: "Records and access details needed before monthly bookkeeping begins." },
+    { title: "VAT records checklist", path: "/vat-records-checklist/", copy: "Documents and reports to prepare before a VAT return review." },
+    { title: "Probate information request", path: "/probate-information-request/", copy: "Initial estate information needed before probate accounts or tax work can begin." }
+  ];
+
+  return `
+    ${renderPageHero(page)}
+    <section class="section section-white">
+      <div class="container center">
+        <p class="eyebrow">Forms</p>
+        <h2>Onboarding and planning documents</h2>
+        <p class="lead">Forms are grouped by the type of information usually needed at the start of an engagement.</p>
+      </div>
+      <div class="container resource-grid" style="margin-top:38px">
+        ${forms.map(renderResourceCard).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderMediaPage(page) {
+  const items = [
+    ["Video", "Understanding your monthly management accounts", "A short walkthrough of the reports directors should review each month."],
+    ["Podcast", "Cloud accounting clean-up", "A discussion on bank feeds, coding rules and how to keep bookkeeping reliable."],
+    ["Video", "Preparing for a tax planning meeting", "What information to gather before discussing company, personal or property tax."],
+    ["Podcast", "Payroll questions employers often ask", "A practical conversation on starters, leavers, benefits and year-end payroll routines."],
+    ["Video", "When a business needs audit or assurance", "How to understand audit thresholds, lender requests and other assurance needs."],
+    ["Podcast", "Cash flow forecasting for owner-managed businesses", "Why forecasts work best when they are maintained monthly, not just before funding rounds."]
+  ];
+
+  return `
+    ${renderPageHero(page)}
+    <section class="section section-white">
+      <div class="container center">
+        <p class="eyebrow">Videos & podcasts</p>
+        <h2>Advisory conversations and explainers</h2>
+        <p class="lead">Short-form content for common finance, tax and reporting questions.</p>
+      </div>
+      <div class="container blog-grid" style="margin-top:38px">
+        ${items
+          .map(
+            ([label, title, copy]) => `
+              <article class="blog-card">
+                <p class="eyebrow">${label}</p>
+                <h3>${title}</h3>
+                <p>${copy}</p>
+                <a href="/contact-us/#contact">Request this topic</a>
+              </article>
+            `
+          )
+          .join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderNewsletterPage(page) {
+  return `
+    ${renderPageHero(page)}
+    <section class="section section-paper">
+      <div class="container contact-layout">
+        <div>
+          <p class="eyebrow">Newsletter</p>
+          <h2>Monthly finance notes</h2>
+          <p class="lead">Sign up for tax reminders, reporting ideas and short planning notes for owner-managed businesses.</p>
+          <ul class="check-list">
+            <li>Deadline reminders before common filing dates.</li>
+            <li>Practical notes on bookkeeping, payroll and tax records.</li>
+            <li>Short updates when rules affect small businesses or landlords.</li>
+          </ul>
+        </div>
+        <form class="contact-form" data-local-form>
+          <h2>Sign up</h2>
+          <div class="field">
+            <label for="newsletter-name">Name</label>
+            <input id="newsletter-name" name="newsletter-name" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="newsletter-email">Email</label>
+            <input id="newsletter-email" name="newsletter-email" type="email" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="newsletter-interest">Main interest</label>
+            <select id="newsletter-interest" name="newsletter-interest">
+              <option>Business tax</option>
+              <option>Payroll</option>
+              <option>Cloud accounting</option>
+              <option>Personal tax</option>
+              <option>Audit and assurance</option>
+            </select>
+          </div>
+          <label><input type="checkbox" required> I understand this portfolio form shows a local confirmation message only.</label>
+          <button class="btn btn-copper" type="submit">Sign up</button>
+          <p class="form-notice" hidden>Form complete. No message was sent.</p>
+        </form>
+      </div>
+    </section>
+  `;
+}
+
+function renderRatesPage(page) {
+  const sections = [
+    {
+      title: "Income Tax: England, Wales and Northern Ireland",
+      points: [
+        "Personal Allowance: £12,570.",
+        "Basic rate: 20% from £12,571 to £50,270.",
+        "Higher rate: 40% from £50,271 to £125,140.",
+        "Additional rate: 45% over £125,140."
+      ],
+      source: "https://www.gov.uk/income-tax-rates/current-rates-and-allowances"
+    },
+    {
+      title: "Scottish PAYE bands",
+      points: [
+        "Personal Allowance: £12,570.",
+        "Starter rate: 19% from £12,571 to £16,537.",
+        "Basic rate: 20% from £16,538 to £29,526.",
+        "Intermediate rate: 21% from £29,527 to £43,662.",
+        "Higher rate: 42% from £43,663 to £75,000.",
+        "Advanced rate: 45% from £75,001 to £125,140.",
+        "Top rate: 48% over £125,140."
+      ],
+      source: "https://www.gov.uk/scottish-income-tax"
+    },
+    {
+      title: "National Insurance: Class 1",
+      points: [
+        "Primary threshold: £12,570 per year.",
+        "Upper earnings limit: £50,270 per year.",
+        "Employee category A rate: 8% between the primary threshold and upper earnings limit.",
+        "Employee category A rate above the upper earnings limit: 2%."
+      ],
+      source: "https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2026-to-2027"
+    },
+    {
+      title: "VAT",
+      points: [
+        "Standard rate: 20%.",
+        "Reduced rate: 5%.",
+        "Zero rate: 0%.",
+        "Some supplies are exempt or outside the scope, so coding should be checked before filing."
+      ],
+      source: "https://www.gov.uk/vat-rates"
+    },
+    {
+      title: "Dividend Tax",
+      points: [
+        "Dividend allowance: £500.",
+        "Basic rate: 10.75% above the allowance.",
+        "Higher rate: 35.75% above the allowance.",
+        "Additional rate: 39.35% above the allowance."
+      ],
+      source: "https://www.gov.uk/tax-on-dividends"
+    },
+    {
+      title: "Corporation Tax",
+      points: [
+        "Main rate: 25% for profits over £250,000.",
+        "Small profits rate: 19% for profits of £50,000 or less.",
+        "Marginal relief may apply between £50,000 and £250,000.",
+        "Thresholds can be reduced for short accounting periods and associated companies."
+      ],
+      source: "https://www.gov.uk/corporation-tax-rates"
+    }
+  ];
+
+  return `
+    ${renderPageHero(page)}
+    <section class="section section-white">
+      <div class="container center">
+        <p class="eyebrow">Tax rates & allowances</p>
+        <h2>2026/27 reference rates</h2>
+        <p class="lead">A quick reference for common UK tax rates and allowances. Figures should still be checked before filing, planning or advising.</p>
+      </div>
+      <div class="container resource-grid" style="margin-top:38px">
+        ${sections
+          .map(
+            (section) => `
+              <article class="resource-card">
+                <h3>${section.title}</h3>
+                <ul class="check-list">
+                  ${section.points.map((point) => `<li>${point}</li>`).join("")}
+                </ul>
+                <a class="btn btn-copper" href="${section.source}" target="_blank" rel="noopener noreferrer">View source</a>
+              </article>
+            `
+          )
+          .join("")}
+      </div>
+    </section>
+  `;
+}
+
 function renderAboutOverviewPage(page) {
   const cards = [
-    { title: "Who are we?", path: "/about-us-accountants-in-hampshire-west-sussex/", copy: "The practice story, approach and values." },
-    { title: "Meet the Team", path: "/lewis-brownlee-team-west-sussex-and-accountancy-experts/", copy: "A portfolio team grid with adviser profiles." },
-    { title: "Careers", path: "/careers-3/", copy: "Recruitment, team values and a demo application journey." },
+    { title: "Who are we?", path: "/who-we-are/", copy: "The practice story, approach and values." },
+    { title: "Meet the Team", path: "/meet-the-team/", copy: "A portfolio team grid with adviser profiles." },
+    { title: "Careers", path: "/careers/", copy: "Recruitment, team values and the application journey." },
     { title: "Corporate and Social Responsibility", path: "/corporate-and-social-responsibility/", copy: "Community, sustainability and responsible-business content." }
   ];
 
@@ -509,38 +803,52 @@ function renderAboutOverviewPage(page) {
 }
 
 function renderServicesOverviewPage(page) {
-  const grouped = servicePages.reduce((groups, servicePage) => {
-    if (servicePage.path === "/xero-cloud-accounting-experts/" || servicePage.path === "/probate/") return groups;
-    if (!groups.has(servicePage.area)) groups.set(servicePage.area, []);
-    groups.get(servicePage.area).push(servicePage);
-    return groups;
-  }, new Map());
+  const serviceMenu = nav.find((item) => item.label === "Services");
+  const serviceByPath = new Map(servicePages.map((servicePage) => [servicePage.path, servicePage]));
+  const sectionNotes = {
+    "Advisory & Growth": "Planning, forecasting and senior finance support for businesses that want clearer decisions and stronger margins.",
+    Tax: "Business and personal tax pages grouped together so visitors can quickly find the right specialist advice.",
+    "Accounts & Operations": "Day-to-day finance operations, cloud accounting, annual accounts and payroll support in one section.",
+    "Audit & Specialist": "Assurance, probate and sector-specific services for organisations with specialist compliance needs."
+  };
+  const serviceGroups = serviceMenu.children.map((group) => ({
+    ...group,
+    note: sectionNotes[group.label] || "Specialist services grouped for easier browsing.",
+    items: group.children.map((item) => ({
+      ...item,
+      service: serviceByPath.get(item.path)
+    }))
+  }));
 
   return `
     ${renderPageHero(page)}
-    <section class="section section-white">
+    <section class="section section-white services-intro">
       <div class="container center">
         <p class="eyebrow">Our services</p>
-        <h2>All services, clearly organised</h2>
-        <p class="lead">The dropdown remains quick for navigation, and this page gives visitors a full overview of every service area.</p>
+        <h2>Four clear service families</h2>
+        <p class="lead">Each section below matches the dropdown menu: choose a service family, then open the individual service page you need.</p>
       </div>
     </section>
-    ${[...grouped.entries()]
+    ${serviceGroups
       .map(
-        ([area, items], index) => `
-          <section class="section ${index % 2 ? "section-paper" : "section-navy"}">
-            <div class="container">
-              <p class="eyebrow">${area}</p>
-              <h2>${area}</h2>
-              <div class="card-grid" style="margin-top:30px">
-                ${items
+        (group, index) => `
+          <section class="section service-family-section ${index % 2 ? "section-paper" : "section-white"}">
+            <div class="container service-family">
+              <div class="service-family-heading">
+                <span class="service-family-number">${String(index + 1).padStart(2, "0")}</span>
+                <p class="eyebrow">Service family</p>
+                <h2>${group.label}</h2>
+                <p>${group.note}</p>
+              </div>
+              <div class="service-family-grid">
+                ${group.items
                   .map(
                     (item) => `
-                      <article class="feature-card">
-                        <h3>${item.title}</h3>
-                        <p>${item.subtitle}</p>
-                        <a class="btn ${index % 2 ? "btn-copper" : "btn-light"}" href="${item.path}">View service</a>
-                      </article>
+                      <a class="service-overview-card" href="${item.path}">
+                        <span class="service-card-title">${item.label}</span>
+                        <span class="service-card-copy">${item.service?.subtitle || "Open this service page for more detail."}</span>
+                        <span class="service-card-action">View service</span>
+                      </a>
                     `
                   )
                   .join("")}
@@ -555,10 +863,10 @@ function renderServicesOverviewPage(page) {
 
 function renderLoginsOverviewPage(page) {
   const cards = [
-    { title: "Client Portal", path: "/client-portal/", copy: "A demo secure portal entry point." },
-    { title: "Xero Login", path: "/xero-login/", copy: "A placeholder for cloud accounting access." },
-    { title: "Dext Login", path: "/dext-login/", copy: "A placeholder for receipt and document capture." },
-    { title: "Quickbooks Online Login", path: "/quickbooks-online-login/", copy: "A placeholder for Quickbooks users." }
+    { title: "Client Portal", path: "/client-portal/", copy: "Secure portal access for client documents." },
+    { title: "Xero Login", path: "/xero-login/", copy: "Cloud accounting access for Xero users." },
+    { title: "Dext Login", path: "/dext-login/", copy: "Receipt and document capture access." },
+    { title: "Quickbooks Online Login", path: "/quickbooks-online-login/", copy: "QuickBooks Online access for clients." }
   ];
 
   return `
@@ -566,8 +874,8 @@ function renderLoginsOverviewPage(page) {
     <section class="section section-white">
       <div class="container center">
         <p class="eyebrow">Client access</p>
-        <h2>Choose your demo login area</h2>
-        <p class="lead">These links are intentionally non-functional placeholders for the portfolio version.</p>
+        <h2>Choose your login area</h2>
+        <p class="lead">These links are included for portfolio presentation and are not connected to live client systems.</p>
         <div class="resource-grid" style="margin-top:38px">
           ${cards.map(renderResourceCard).join("")}
         </div>
@@ -582,7 +890,8 @@ function renderCalculatorsPage(page) {
     <section class="section section-white">
       <div class="container center">
         <p class="eyebrow">Calculators</p>
-        <h2>Quick sample estimates</h2>
+        <h2>Focused calculators for common planning questions</h2>
+        <p class="lead">Each calculator now has its own inputs and assumptions, so the result matches the page rather than using a generic estimate.</p>
         <div class="resource-grid" style="margin-top:38px">
           ${calculatorPages.map((calc) => renderResourceCard({ title: calc.title, path: calc.path, copy: calc.subtitle })).join("")}
         </div>
@@ -591,38 +900,366 @@ function renderCalculatorsPage(page) {
   `;
 }
 
+const calculatorConfigs = {
+  vat: {
+    intro: "Add VAT to a net amount or extract VAT from a gross amount using UK standard, reduced, zero or custom rates.",
+    fields: [
+      { name: "amount", label: "Amount", type: "number", value: 1000, min: 0, step: 0.01, hint: "Enter the net amount when adding VAT, or the gross amount when extracting VAT." },
+      {
+        name: "vatMode",
+        label: "Calculation",
+        type: "select",
+        value: "add",
+        options: [
+          ["add", "Add VAT to net amount"],
+          ["extract", "Extract VAT from gross amount"]
+        ]
+      },
+      {
+        name: "vatRate",
+        label: "VAT rate",
+        type: "select",
+        value: "20",
+        options: [
+          ["20", "Standard rate - 20%"],
+          ["5", "Reduced rate - 5%"],
+          ["0", "Zero rate - 0%"],
+          ["custom", "Custom rate"]
+        ]
+      },
+      { name: "customVatRate", label: "Custom rate %", type: "number", value: 20, min: 0, max: 100, step: 0.1 }
+    ],
+    notes: ["UK VAT rates used: standard 20%, reduced 5%, zero 0%."]
+  },
+  payroll: {
+    intro: "Estimate employee take-home pay using 2026/27 PAYE bands and Class 1 employee National Insurance thresholds.",
+    fields: [
+      { name: "annualSalary", label: "Annual gross salary", type: "number", value: 45000, min: 0, step: 100 },
+      {
+        name: "taxRegion",
+        label: "Tax region",
+        type: "select",
+        value: "england",
+        options: [
+          ["england", "England, Wales or Northern Ireland"],
+          ["scotland", "Scotland"]
+        ]
+      },
+      {
+        name: "payPeriods",
+        label: "Pay frequency",
+        type: "select",
+        value: "12",
+        options: [
+          ["12", "Monthly"],
+          ["52", "Weekly"]
+        ]
+      },
+      { name: "pensionRate", label: "Pension before tax %", type: "number", value: 5, min: 0, max: 100, step: 0.1 },
+      {
+        name: "studentLoanPlan",
+        label: "Student loan plan",
+        type: "select",
+        value: "none",
+        options: [
+          ["none", "No student loan"],
+          ["plan1", "Plan 1"],
+          ["plan2", "Plan 2"],
+          ["plan4", "Plan 4"],
+          ["plan5", "Plan 5"]
+        ]
+      },
+      {
+        name: "postgraduateLoan",
+        label: "Postgraduate loan",
+        type: "select",
+        value: "no",
+        options: [
+          ["no", "No"],
+          ["yes", "Yes"]
+        ]
+      },
+      { name: "otherMonthlyDeductions", label: "Other deductions per month", type: "number", value: 0, min: 0, step: 1, hint: "Optional: benefits or any other fixed deductions." }
+    ],
+    notes: ["Uses the standard personal allowance taper and employee NI category A annual thresholds.", "Student and postgraduate loan thresholds follow 2026/27 employer rates."]
+  },
+  "fuel-cost": {
+    intro: "Estimate fuel spend from mileage, vehicle efficiency and pump price.",
+    fields: [
+      { name: "distance", label: "Miles per trip", type: "number", value: 120, min: 0, step: 1 },
+      { name: "tripsPerMonth", label: "Trips per month", type: "number", value: 8, min: 0, step: 1 },
+      { name: "mpg", label: "Vehicle MPG", type: "number", value: 42, min: 1, step: 0.1 },
+      { name: "fuelPrice", label: "Fuel price pence/litre", type: "number", value: 148, min: 0, step: 0.1 }
+    ],
+    notes: ["Uses UK imperial gallons: 1 gallon = 4.54609 litres."]
+  },
+  cis: {
+    intro: "Calculate CIS deductions on the labour element of a contractor payment.",
+    fields: [
+      { name: "grossPayment", label: "Invoice before VAT", type: "number", value: 5000, min: 0, step: 1 },
+      { name: "materials", label: "Materials included", type: "number", value: 1200, min: 0, step: 1 },
+      { name: "vatCharged", label: "VAT charged", type: "number", value: 1000, min: 0, step: 1 },
+      {
+        name: "cisRate",
+        label: "CIS status",
+        type: "select",
+        value: "20",
+        options: [
+          ["20", "Registered subcontractor - 20%"],
+          ["30", "Unmatched subcontractor - 30%"],
+          ["0", "Gross payment status - 0%"]
+        ]
+      }
+    ],
+    notes: ["CIS is calculated on labour, excluding materials and VAT."]
+  },
+  startup: {
+    intro: "Plan how much cash a new project may need before it becomes self-funding.",
+    fields: [
+      { name: "setupCosts", label: "One-off setup costs", type: "number", value: 15000, min: 0, step: 100 },
+      { name: "monthlyFixedCosts", label: "Monthly fixed costs", type: "number", value: 3500, min: 0, step: 100 },
+      { name: "monthlyPayrollCosts", label: "Monthly payroll/direct costs", type: "number", value: 7000, min: 0, step: 100 },
+      { name: "monthlyRevenue", label: "Expected monthly revenue", type: "number", value: 9000, min: 0, step: 100 },
+      { name: "runwayMonths", label: "Runway months", type: "number", value: 6, min: 1, step: 1 },
+      { name: "contingencyRate", label: "Contingency %", type: "number", value: 15, min: 0, step: 0.5 }
+    ],
+    notes: ["This is a cash planning model, not a tax calculation."]
+  },
+  savings: {
+    intro: "Project savings with monthly deposits and compound interest.",
+    fields: [
+      { name: "openingBalance", label: "Opening balance", type: "number", value: 10000, min: 0, step: 100 },
+      { name: "monthlyContribution", label: "Monthly contribution", type: "number", value: 300, min: 0, step: 10 },
+      { name: "annualReturn", label: "Annual return %", type: "number", value: 4.5, min: -99, step: 0.1 },
+      { name: "years", label: "Years", type: "number", value: 10, min: 0, step: 0.5 }
+    ],
+    notes: ["Assumes monthly compounding and contributions at the end of each month."]
+  },
+  millionaire: {
+    intro: "Estimate how long it could take to reach a target savings balance.",
+    fields: [
+      { name: "openingBalance", label: "Current savings", type: "number", value: 50000, min: 0, step: 100 },
+      { name: "monthlyContribution", label: "Monthly contribution", type: "number", value: 1500, min: 0, step: 10 },
+      { name: "annualReturn", label: "Annual return %", type: "number", value: 5, min: -99, step: 0.1 },
+      { name: "target", label: "Target balance", type: "number", value: 1000000, min: 1, step: 1000 }
+    ],
+    notes: ["Assumes monthly compounding and contributions at the end of each month."]
+  },
+  apr: {
+    intro: "Estimate an effective APR from the money received, any upfront fee, the repayment amount and term.",
+    fields: [
+      { name: "cashReceived", label: "Cash received", type: "number", value: 10000, min: 0, step: 100 },
+      { name: "upfrontFees", label: "Upfront fees", type: "number", value: 250, min: 0, step: 1 },
+      { name: "monthlyRepayment", label: "Monthly repayment", type: "number", value: 315, min: 0, step: 1 },
+      { name: "months", label: "Term in months", type: "number", value: 36, min: 1, step: 1 }
+    ],
+    notes: ["APR is estimated from monthly cash flows and may differ from a lender's regulated APR calculation."]
+  },
+  loan: {
+    intro: "Calculate repayments and total interest for a fixed-rate loan.",
+    fields: [
+      { name: "loanAmount", label: "Loan amount", type: "number", value: 25000, min: 0, step: 100 },
+      { name: "annualRate", label: "Annual interest rate %", type: "number", value: 7, min: 0, step: 0.1 },
+      { name: "months", label: "Term in months", type: "number", value: 60, min: 1, step: 1 },
+      { name: "arrangementFee", label: "Fee added to loan", type: "number", value: 0, min: 0, step: 1 }
+    ],
+    notes: ["Assumes a fixed rate and equal monthly repayments."]
+  },
+  gross: {
+    intro: "Work out gross profit, gross margin and mark-up.",
+    fields: [
+      { name: "salesRevenue", label: "Sales revenue", type: "number", value: 120000, min: 0, step: 100 },
+      { name: "directCosts", label: "Direct costs", type: "number", value: 72000, min: 0, step: 100 }
+    ],
+    notes: ["Gross margin is gross profit divided by sales. Mark-up is gross profit divided by direct costs."]
+  },
+  dividend: {
+    intro: "Estimate UK dividend tax using the 2026/27 dividend allowance and rate bands.",
+    fields: [
+      { name: "otherIncome", label: "Other taxable income", type: "number", value: 35000, min: 0, step: 100 },
+      { name: "dividends", label: "Dividend income", type: "number", value: 15000, min: 0, step: 100 }
+    ],
+    notes: ["Applies the personal allowance to other income first, then dividends, and uses the £500 dividend allowance."]
+  },
+  mortgage: {
+    intro: "Estimate repayment mortgage costs from property price, deposit, rate and term.",
+    fields: [
+      { name: "propertyPrice", label: "Property price", type: "number", value: 425000, min: 0, step: 1000 },
+      { name: "deposit", label: "Deposit", type: "number", value: 85000, min: 0, step: 1000 },
+      { name: "annualRate", label: "Annual interest rate %", type: "number", value: 5.25, min: 0, step: 0.01 },
+      { name: "years", label: "Term in years", type: "number", value: 25, min: 1, step: 1 }
+    ],
+    notes: ["Assumes a repayment mortgage with a fixed interest rate across the whole term."]
+  },
+  "more-profit": {
+    intro: "Model how extra sales or a margin improvement could change annual profit.",
+    fields: [
+      { name: "annualRevenue", label: "Current annual revenue", type: "number", value: 500000, min: 0, step: 1000 },
+      { name: "grossMargin", label: "Current gross margin %", type: "number", value: 38, min: 0, max: 100, step: 0.1 },
+      { name: "overheads", label: "Annual overheads", type: "number", value: 140000, min: 0, step: 1000 },
+      { name: "revenueUplift", label: "Revenue uplift %", type: "number", value: 8, min: -100, step: 0.1 },
+      { name: "marginUplift", label: "Margin improvement points", type: "number", value: 2, min: -100, step: 0.1 }
+    ],
+    notes: ["This is a commercial planning model and excludes corporation tax."]
+  },
+  lbtt: {
+    intro: "Estimate Scottish residential Land and Buildings Transaction Tax.",
+    fields: [
+      { name: "propertyPrice", label: "Purchase price", type: "number", value: 350000, min: 0, step: 1000 },
+      {
+        name: "buyerType",
+        label: "Buyer type",
+        type: "select",
+        value: "standard",
+        options: [
+          ["standard", "Main residence"],
+          ["firstTime", "First-time buyer"],
+          ["additional", "Additional dwelling"]
+        ]
+      }
+    ],
+    notes: ["Additional Dwelling Supplement is modelled at 8% of the full price where applicable."]
+  },
+  "company-car": {
+    intro: "Estimate taxable company car and private fuel benefit for 2026/27.",
+    fields: [
+      { name: "listPrice", label: "Car list price", type: "number", value: 42000, min: 0, step: 100 },
+      { name: "co2", label: "CO2 emissions g/km", type: "number", value: 48, min: 0, step: 1 },
+      {
+        name: "electricRange",
+        label: "Electric range",
+        type: "select",
+        value: "70",
+        options: [
+          ["130", "130 miles or more"],
+          ["70", "70 to 129 miles"],
+          ["40", "40 to 69 miles"],
+          ["30", "30 to 39 miles"],
+          ["0", "Less than 30 miles or none"]
+        ]
+      },
+      {
+        name: "fuelType",
+        label: "Fuel type",
+        type: "select",
+        value: "petrol",
+        options: [
+          ["petrol", "Petrol, hybrid or RDE2 diesel"],
+          ["diesel", "Diesel not meeting RDE2"]
+        ]
+      },
+      {
+        name: "privateFuel",
+        label: "Private fuel provided",
+        type: "select",
+        value: "no",
+        options: [
+          ["no", "No"],
+          ["yes", "Yes"]
+        ]
+      },
+      {
+        name: "taxRate",
+        label: "Employee tax rate",
+        type: "select",
+        value: "40",
+        options: [
+          ["20", "20%"],
+          ["40", "40%"],
+          ["45", "45%"],
+          ["19", "19% Scottish starter"],
+          ["42", "42% Scottish higher"],
+          ["48", "48% Scottish top"]
+        ]
+      }
+    ],
+    notes: ["Fuel benefit uses the 2026/27 multiplier of £29,200.", "The diesel supplement is capped so the benefit percentage never exceeds 37%."]
+  },
+  sdlt: {
+    intro: "Estimate residential Stamp Duty Land Tax in England or Northern Ireland.",
+    fields: [
+      { name: "propertyPrice", label: "Purchase price", type: "number", value: 425000, min: 0, step: 1000 },
+      {
+        name: "buyerType",
+        label: "Buyer type",
+        type: "select",
+        value: "standard",
+        options: [
+          ["standard", "Main residence"],
+          ["firstTime", "First-time buyer"],
+          ["additional", "Additional dwelling"]
+        ]
+      },
+      {
+        name: "nonResident",
+        label: "Non-resident surcharge",
+        type: "select",
+        value: "no",
+        options: [
+          ["no", "No"],
+          ["yes", "Yes - add 2%"]
+        ]
+      }
+    ],
+    notes: ["First-time buyer relief is applied only where the purchase price is £500,000 or less.", "Additional dwelling surcharge is modelled at 5% of the full price."]
+  }
+};
+
+function renderCalculatorField(field, page) {
+  const id = `calc-${page.calc}-${field.name}`;
+  const hintId = `${id}-hint`;
+  const attrs = [
+    `id="${id}"`,
+    `name="${field.name}"`,
+    field.min !== undefined ? `min="${field.min}"` : "",
+    field.max !== undefined ? `max="${field.max}"` : "",
+    field.step !== undefined ? `step="${field.step}"` : "",
+    field.hint ? `aria-describedby="${hintId}"` : ""
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const control =
+    field.type === "select"
+      ? `<select ${attrs}>${field.options
+          .map(([value, label]) => `<option value="${escapeHtml(value)}"${String(value) === String(field.value) ? " selected" : ""}>${escapeHtml(label)}</option>`)
+          .join("")}</select>`
+      : `<input ${attrs} type="${field.type || "number"}" value="${escapeHtml(field.value ?? "")}" inputmode="decimal">`;
+
+  return `
+    <div class="field${field.full ? " full" : ""}">
+      <label for="${id}">${field.label}</label>
+      ${control}
+      ${field.hint ? `<span class="field-hint" id="${hintId}">${field.hint}</span>` : ""}
+    </div>
+  `;
+}
+
 function renderCalculatorPage(page) {
-  const label = page.calc === "gross" ? "Sales or income" : page.calc === "payroll" ? "Monthly gross pay" : "Amount";
-  const secondLabel = page.calc === "gross" ? "Direct costs" : page.calc === "fuel" ? "Monthly mileage" : page.calc === "startup" ? "Setup costs" : "Second amount";
+  const config = calculatorConfigs[page.calc] || calculatorConfigs.loan;
 
   return `
     ${renderPageHero(page)}
     <section class="section section-white">
-      <div class="container split">
-        <div>
-          <p class="eyebrow">Interactive demo</p>
+      <div class="container calculator-layout">
+        <div class="calculator-copy">
+          <p class="eyebrow">Calculator</p>
           <h2>${page.title}</h2>
-          <p>This lightweight calculator is included so the resource pages feel complete. It uses sample assumptions and should not be treated as regulated financial or tax advice.</p>
+          <p>${config.intro}</p>
+          <ul class="calc-notes">
+            ${config.notes.map((note) => `<li>${note}</li>`).join("")}
+            <li>For guidance only: always confirm figures before making financial or tax decisions.</li>
+          </ul>
           <a class="btn btn-copper" href="/resources-2/calculators/">Back to calculators</a>
         </div>
         <div class="calc-tool" data-calc="${page.calc}">
-          <div class="field">
-            <label for="amount">${label}</label>
-            <input id="amount" name="amount" type="number" value="25000" min="0" step="100">
+          <div class="calc-fields">
+            ${config.fields.map((field) => renderCalculatorField(field, page)).join("")}
           </div>
-          <div class="field">
-            <label for="rate">Rate %</label>
-            <input id="rate" name="rate" type="number" value="${page.calc === "vat" ? 20 : 7}" min="0" step="0.1">
+          <div class="calc-result" aria-live="polite">
+            <strong data-calc-output></strong>
+            <ul data-calc-breakdown></ul>
           </div>
-          <div class="field">
-            <label for="months">Months</label>
-            <input id="months" name="months" type="number" value="36" min="1" step="1">
-          </div>
-          <div class="field">
-            <label for="second">${secondLabel}</label>
-            <input id="second" name="second" type="number" value="12000" min="0" step="100">
-          </div>
-          <div class="calc-result" data-calc-output></div>
         </div>
       </div>
     </section>
@@ -630,23 +1267,41 @@ function renderCalculatorPage(page) {
 }
 
 function renderBlogPage(page) {
-  const posts = [
-    ["Preparing your numbers before a busy quarter", "A practical checklist for reports, cash flow and upcoming filing dates."],
-    ["What does good VAT review work include?", "How advisory firms can spot risk before a return is submitted."],
-    ["Using cloud accounts to shorten month end", "A simple workflow for cleaner data and faster decisions."]
-  ];
+  const isNewsPage = normalize(page.path) === "/news/";
+  const posts = isNewsPage
+    ? [
+        ["Firm update", "New cloud accounting review service launched", "A short update on the new review process for Xero and QuickBooks clients.", "/resources-2/news-and-reports/"],
+        ["Payroll", "Year-end payroll reminders for employers", "The main records to check before P60s, benefits reporting and new tax year payroll settings.", "/resources-2/news-and-reports/"],
+        ["Business", "Management accounts pack now available for growing teams", "A practical reporting pack designed around sales, margin, debtors, creditors and cash.", "/resources-2/news-and-reports/"],
+        ["Tax", "Making Tax Digital preparation now underway", "Steps sole traders and landlords can take before digital record keeping becomes mandatory.", "/blog/making-tax-digital-for-income-tax/"],
+        ["Audit", "Assurance planning for funding conversations", "What lenders often ask for before a funding round, refinance or acquisition.", "/resources-2/news-and-reports/"],
+        ["Community", "Responsible business and community activity", "A short note on local support, staff development and responsible business priorities.", "/corporate-and-social-responsibility/"]
+      ]
+    : [
+        ["MTD", "Making Tax Digital for Income Tax: Your April 2026 Checklist", "Preparation steps for sole traders and landlords before MTD takes effect.", "/blog/making-tax-digital-for-income-tax/"],
+        ["VAT", "What does good VAT review work include?", "How advisory firms can spot risk before a return is submitted.", "/vat-advice/"],
+        ["Cloud accounting", "Using cloud accounts to shorten month end", "A simple workflow for cleaner data and faster decisions.", "/xero-cloud-accounting-experts-2/"],
+        ["Payroll", "What employers should check before payroll year-end", "Records, benefits and employee data points that are easier to fix before the final pay run.", "/payroll/"],
+        ["Profit", "Why gross margin should be reviewed monthly", "How regular margin review helps spot pricing issues, supplier changes and operational drift.", "/profit-improvement/"],
+        ["Audit", "When assurance work is useful even without a statutory audit", "Situations where lenders, boards or investors may need comfort over specific numbers.", "/audit/"]
+      ];
   return `
     ${renderPageHero(page)}
     <section class="section section-white">
-      <div class="container blog-grid">
+      <div class="container center">
+        <p class="eyebrow">${isNewsPage ? "News" : "Blog"}</p>
+        <h2>${isNewsPage ? "Firm updates and short announcements" : "Articles for business owners and finance teams"}</h2>
+        <p class="lead">${isNewsPage ? "Updates from the practice, payroll reminders and service notes." : "Practical articles on tax, reporting, payroll, cloud accounting and business planning."}</p>
+      </div>
+      <div class="container blog-grid" style="margin-top:38px">
         ${posts
           .map(
-            ([title, copy]) => `
+            ([label, title, copy, path]) => `
               <article class="blog-card">
-                <p class="eyebrow">Insight</p>
+                <p class="eyebrow">${label}</p>
                 <h3>${title}</h3>
                 <p>${copy}</p>
-                <a href="/blog/">Read the sample article</a>
+                <a href="${path}">Read article</a>
               </article>
             `
           )
@@ -669,7 +1324,7 @@ function renderLocationPage(page) {
           <p><strong>Phone:</strong><br>${page.phone}</p>
           <a class="btn btn-copper" href="/contact-us/#contact">Book a meeting</a>
         </div>
-        <div class="map-placeholder">Map placeholder</div>
+        <div class="map-placeholder">Map area</div>
       </div>
     </section>
     ${renderCtaSection()}
@@ -677,29 +1332,216 @@ function renderLocationPage(page) {
 }
 
 function renderGenericPage(page) {
-  const cards = [
-    ["Clear scope", "Visitors can understand what the page is for and where to go next."],
-    ["Useful details", "The layout leaves room for forms, downloads, media, dates or policy text."],
-    ["Portfolio safe", "All wording is original and contact details are placeholders."]
-  ];
+  const pageContent = {
+    "/corporate-and-social-responsibility/": {
+      eyebrow: "Responsibility",
+      heading: "Responsible business, people and community",
+      body: "This page sets out how the practice approaches responsible work, from client care and staff development to community involvement and sensible use of resources.",
+      cards: [
+        ["People", "Training, mentoring and a working culture that supports professional development."],
+        ["Community", "Time and expertise directed toward local organisations and charitable activity."],
+        ["Resources", "Practical steps to reduce waste, use digital records well and manage travel responsibly."]
+      ]
+    },
+    "/50-ways-to-grow-your-business-guide/": {
+      eyebrow: "Growth guide",
+      heading: "Ideas for improving profit, cash and control",
+      body: "This guide is structured around practical areas that often improve a growing business: pricing, reporting, cash flow, tax planning, systems and management habits.",
+      cards: [
+        ["Profit", "Review pricing, direct costs and margin by product, service or client group."],
+        ["Cash", "Improve debtor control, payment terms and short-term cash forecasting."],
+        ["Systems", "Use cloud accounting and monthly reporting to make decisions earlier."]
+      ]
+    },
+    "/property-tax-seminars/": {
+      eyebrow: "Events",
+      heading: "Property tax seminars for landlords and investors",
+      body: "The seminars cover common property tax questions, including ownership structure, finance costs, capital gains tax, record keeping and the timing of advice before a transaction.",
+      cards: [
+        ["Landlords", "Income tax, finance costs, repairs, records and Making Tax Digital preparation."],
+        ["Investors", "Capital gains tax, purchase costs and the tax effect of future disposals."],
+        ["Companies", "When a company structure may be relevant and what administration comes with it."]
+      ]
+    },
+    "/probating-a-will/": {
+      eyebrow: "Probate guide",
+      heading: "Probating a will and dealing with estate accounts",
+      body: "This guide explains the financial information executors usually need to gather before probate work can progress, including assets, liabilities, income, gifts and tax records.",
+      cards: [
+        ["Estate records", "Bank accounts, investments, property values, pensions and personal assets."],
+        ["Tax position", "Inheritance tax, income tax and capital gains tax points during administration."],
+        ["Executor support", "Clear estate accounts and reporting for beneficiaries."]
+      ]
+    },
+    "/probate-valuation/": {
+      eyebrow: "Probate valuation",
+      heading: "Valuations for probate and estate reporting",
+      body: "Probate valuation work brings together financial records, asset values and tax information so executors can report the estate accurately and deal with beneficiaries confidently.",
+      cards: [
+        ["Assets", "Property, investments, business interests and personal assets reviewed for reporting."],
+        ["Liabilities", "Debts, expenses and tax liabilities gathered before estate accounts are prepared."],
+        ["Reporting", "Estate figures presented clearly for executors, advisers and beneficiaries."]
+      ]
+    },
+    "/driving-instructions/": {
+      eyebrow: "Directions",
+      heading: "Planning a visit to the office",
+      body: "This page gives visitors a simple place to check office access, parking expectations and who to contact before travelling.",
+      cards: [
+        ["Before you travel", "Confirm the office, meeting time and documents needed for your appointment."],
+        ["Parking", "Allow time for local parking or public transport, especially around peak hours."],
+        ["Accessibility", "Contact the team before the visit if you need step-free access or other arrangements."]
+      ]
+    },
+    "/complaints_procedure/": {
+      eyebrow: "Complaints procedure",
+      heading: "How concerns are handled",
+      body: "If a concern is raised, it should be acknowledged promptly, reviewed by an appropriate senior person and answered clearly once the facts have been checked.",
+      cards: [
+        ["Raise the concern", "Set out what happened, who was involved and what outcome you are seeking."],
+        ["Review", "The issue is reviewed against the engagement scope, correspondence and work completed."],
+        ["Response", "A written response explains the outcome and any next steps."]
+      ]
+    },
+    "/privacy/": {
+      eyebrow: "Privacy",
+      heading: "How personal information is handled",
+      body: "This privacy page explains the type of information a professional services website may collect and how client information should be handled securely.",
+      cards: [
+        ["Information collected", "Contact details, enquiry information and records needed to provide services."],
+        ["Use of information", "Data used to respond to enquiries, manage engagements and meet legal duties."],
+        ["Security", "Information should be stored carefully and accessed only by people who need it."]
+      ]
+    },
+    "/cookies/": {
+      eyebrow: "Cookies",
+      heading: "How cookies may be used",
+      body: "This page explains how a website may use essential cookies, analytics cookies and preference settings to support a better browsing experience.",
+      cards: [
+        ["Essential cookies", "Used for core site functions such as forms, navigation and security."],
+        ["Analytics", "Used to understand which pages are useful and where visitors may need clearer routes."],
+        ["Preferences", "Used to remember basic choices where the site requires them."]
+      ]
+    },
+    "/disclaimer/": {
+      eyebrow: "Disclaimer",
+      heading: "Important information before relying on content",
+      body: "Website content can explain common issues, but it cannot replace advice based on a client's full circumstances, records and current legislation.",
+      cards: [
+        ["General information", "Content is for general understanding and should not be treated as personal advice."],
+        ["Professional advice", "Tax and financial decisions should be checked with an adviser before action is taken."],
+        ["Current rules", "Rates, thresholds and requirements should be confirmed before relying on them."]
+      ]
+    },
+    "/2025-probate-diversity-survey-results/": {
+      eyebrow: "Diversity results",
+      heading: "Probate diversity survey summary",
+      body: "This page presents a structured summary for probate diversity reporting, with the kind of categories and commentary a regulated practice may publish.",
+      cards: [
+        ["Participation", "A summary of response levels and the scope of the survey."],
+        ["Representation", "High-level diversity categories presented in an anonymised format."],
+        ["Review", "How the information can guide recruitment, training and client service improvements."]
+      ]
+    },
+    "/client-portal/": {
+      eyebrow: "Client portal",
+      heading: "Secure document exchange",
+      body: "The client portal page is for secure access to documents, approvals and messages connected to client work.",
+      cards: [
+        ["Documents", "Upload and receive accounts, tax returns, payroll reports and supporting records."],
+        ["Approvals", "Review documents before filing or signature."],
+        ["Support", "Contact the team if access needs to be set up or reset."]
+      ]
+    },
+    "/xero-login/": {
+      eyebrow: "Xero login",
+      heading: "Cloud accounting access for Xero users",
+      body: "This page helps Xero users find the correct login route and understand when to contact the team for setup, permissions or bookkeeping support.",
+      cards: [
+        ["Access", "Use the Xero login route for bookkeeping, bank feeds and reporting."],
+        ["Permissions", "Check user roles before inviting staff or advisers."],
+        ["Support", "Ask for help with setup, clean-up work or management reports."]
+      ]
+    },
+    "/dext-login/": {
+      eyebrow: "Dext login",
+      heading: "Receipt and document capture access",
+      body: "This page is for clients using Dext to upload receipts, supplier invoices and purchase records for bookkeeping and VAT work.",
+      cards: [
+        ["Receipts", "Capture receipts promptly so bookkeeping records stay current."],
+        ["Supplier invoices", "Upload purchase invoices with enough detail for coding and VAT review."],
+        ["Workflow", "Keep document capture consistent so month-end work is quicker."]
+      ]
+    },
+    "/quickbooks-online-login/": {
+      eyebrow: "QuickBooks login",
+      heading: "QuickBooks Online access",
+      body: "This page is for QuickBooks users who need access to bookkeeping, invoices, bank feeds and management reports.",
+      cards: [
+        ["Bookkeeping", "Use QuickBooks for transactions, reconciliations and basic reports."],
+        ["Invoices", "Keep customer and supplier records up to date."],
+        ["Advice", "Ask for support with setup, clean-up work or reporting categories."]
+      ]
+    },
+    "/thank-you/": {
+      eyebrow: "Thank you",
+      heading: "Your enquiry has been received",
+      body: "This confirmation page lets visitors know the form process is complete and explains what normally happens next.",
+      cards: [
+        ["Review", "The enquiry would be reviewed by the relevant team."],
+        ["Contact", "A suitable adviser would respond using the contact details provided."],
+        ["Preparation", "Any useful documents or background information can be gathered before a meeting."]
+      ]
+    },
+    "/newsletter-sign-up-completion/": {
+      eyebrow: "Newsletter",
+      heading: "Newsletter sign-up complete",
+      body: "This page confirms that a newsletter sign-up has been completed and explains what kind of updates the visitor can expect.",
+      cards: [
+        ["Tax reminders", "Key filing and payment dates before common deadlines."],
+        ["Business notes", "Short updates on reporting, payroll and bookkeeping."],
+        ["Planning prompts", "Timely reminders before year-end or major rule changes."]
+      ]
+    },
+    "/mhmm-menu-layout-loader/": {
+      eyebrow: "Navigation",
+      heading: "Menu support page",
+      body: "This preserved route supports the copied site structure and keeps older navigation references from leading to a missing page.",
+      cards: [
+        ["Routing", "The page exists so legacy menu references continue to resolve."],
+        ["Navigation", "Visitors can return to the main resource, service or contact sections."],
+        ["Maintenance", "The route can be removed later if it is no longer needed."]
+      ]
+    }
+  };
+  const content = pageContent[normalize(page.path)] || {
+    eyebrow: page.type.replaceAll("-", " "),
+    heading: page.title,
+    body: page.subtitle || "This page is part of the portfolio website structure.",
+    cards: [
+      ["Overview", "A short introduction to the topic and why it matters."],
+      ["Next steps", "Where a visitor can go next if they need more information."],
+      ["Contact", "A route back to the team for a relevant enquiry."]
+    ]
+  };
 
   return `
     ${renderPageHero(page)}
     <section class="section section-white">
       <div class="container split">
         <div>
-          <p class="eyebrow">${page.type.replaceAll("-", " ")}</p>
-          <h2>${page.title}</h2>
-          <p class="lead">${page.subtitle || "A preserved page in the portfolio structure."}</p>
-          <p>This page keeps the role of the original URL in the site architecture while replacing the copy with portfolio-safe content. It can be expanded later with real case study material, forms or sector-specific detail.</p>
+          <p class="eyebrow">${content.eyebrow}</p>
+          <h2>${content.heading}</h2>
+          <p class="lead">${page.subtitle || content.heading}</p>
+          <p>${content.body}</p>
           <a class="btn btn-copper" href="/contact-us/#contact">Contact us</a>
         </div>
-        <div class="split-media"><img src="${page.image || site.images.office}" alt=""></div>
+        <div class="split-media"><img src="${page.image || site.images.office}" alt="${page.title}" loading="lazy"></div>
       </div>
     </section>
     <section class="section section-paper">
       <div class="container feature-grid">
-        ${cards.map(([title, copy]) => `<article class="feature-card"><h3>${title}</h3><p>${copy}</p></article>`).join("")}
+        ${content.cards.map(([title, copy]) => `<article class="feature-card"><h3>${title}</h3><p>${copy}</p></article>`).join("")}
       </div>
     </section>
   `;
@@ -707,20 +1549,102 @@ function renderGenericPage(page) {
 
 function renderCalendarPage(page) {
   const dates = [
-    ["31 Jan", "Self-assessment filing and balancing payment deadline."],
-    ["6 Apr", "Start of the new UK tax year."],
-    ["31 Jul", "Second payment on account for self-assessment."],
-    ["19 Oct", "PAYE and CIS quarterly postal payment date."],
-    ["31 Dec", "Planning checkpoint before year-end reporting begins."]
+    ["19 Jan", "PAYE, NIC and CIS postal payment deadline for the quarter ended 5 January."],
+    ["22 Jan", "Electronic PAYE, NIC and CIS payment deadline for the quarter ended 5 January."],
+    ["31 Jan", "Self Assessment online filing deadline and balancing payment deadline."],
+    ["5 Apr", "End of the UK tax year."],
+    ["6 Apr", "Start of the new UK tax year. Review payroll settings and tax codes."],
+    ["19 Apr", "Final PAYE and CIS postal payment deadline for the tax year just ended."],
+    ["31 May", "P60 deadline for employees who were on payroll at 5 April."],
+    ["6 Jul", "P11D and P11D(b) deadline where benefits and expenses are reportable."],
+    ["31 Jul", "Second payment on account for Self Assessment taxpayers."],
+    ["19 Oct", "PAYE and CIS quarterly postal payment deadline for the quarter ended 5 October."],
+    ["22 Oct", "Electronic PAYE and CIS payment deadline for the quarter ended 5 October."],
+    ["31 Dec", "Planning checkpoint before calendar year-end and January Self Assessment pressure."]
   ];
   return `
     ${renderPageHero(page)}
     <section class="section section-white">
       <div class="container">
-        <h2>Important dates</h2>
+        <p class="eyebrow">Tax calendar</p>
+        <h2>Important filing and payment dates</h2>
+        <p class="lead">Use this calendar as a planning prompt. Exact dates can vary where deadlines fall on weekends or bank holidays.</p>
         <div class="timeline">
           ${dates.map(([date, copy]) => `<article class="timeline-item"><strong>${date}</strong><span>${copy}</span></article>`).join("")}
         </div>
+      </div>
+    </section>
+  `;
+}
+
+function renderResourceFormPage(page) {
+  const forms = {
+    "/payroll-starter-checklist/": {
+      eyebrow: "Payroll form",
+      heading: "What we need before a starter is added",
+      intro: "This page shows the information normally gathered before setting up a new employee in payroll.",
+      checklist: [
+        "Employee full name, address, date of birth and National Insurance number.",
+        "Start date, job title, pay frequency, salary or hourly rate.",
+        "Starter declaration, student loan position and pension status.",
+        "Bank details and any agreed benefits, allowances or deductions."
+      ]
+    },
+    "/bookkeeping-handover-checklist/": {
+      eyebrow: "Bookkeeping form",
+      heading: "Records for a clean bookkeeping handover",
+      intro: "This checklist helps a business prepare the documents and access details needed before monthly bookkeeping starts.",
+      checklist: [
+        "Accounting software access and bank feed status.",
+        "Bank, credit card and loan statements for the handover period.",
+        "Sales invoices, supplier bills, receipts and expense claims.",
+        "VAT scheme details, payroll journals and opening balances."
+      ]
+    },
+    "/vat-records-checklist/": {
+      eyebrow: "VAT form",
+      heading: "Records to prepare before a VAT return review",
+      intro: "This page sets out the reports and evidence normally reviewed before a VAT return is filed.",
+      checklist: [
+        "VAT return period, scheme and filing deadline.",
+        "Sales ledger, purchase ledger and VAT control account reports.",
+        "Evidence for reverse charge, imports, exports or unusual transactions.",
+        "Notes on exempt income, partial exemption or capital items."
+      ]
+    },
+    "/probate-information-request/": {
+      eyebrow: "Probate form",
+      heading: "Initial estate information request",
+      intro: "This checklist helps organise the first information needed for probate accounts, valuations and tax reporting.",
+      checklist: [
+        "Personal details for the deceased and the executors.",
+        "Date of death, will details and known beneficiaries.",
+        "Bank, investment, property, pension and insurance information.",
+        "Known liabilities, funeral costs, gifts and lifetime transfers."
+      ]
+    }
+  };
+  const config = forms[normalize(page.path)] || {
+    eyebrow: "Resource form",
+    heading: page.title,
+    intro: page.subtitle,
+    checklist: ["Basic contact details.", "Relevant dates and reference numbers.", "Supporting documents.", "Any notes that explain the request."]
+  };
+
+  return `
+    ${renderPageHero(page)}
+    <section class="section section-paper">
+      <div class="container contact-layout">
+        <div>
+          <p class="eyebrow">${config.eyebrow}</p>
+          <h2>${config.heading}</h2>
+          <p class="lead">${config.intro}</p>
+          <ul class="check-list">
+            ${config.checklist.map((item) => `<li>${item}</li>`).join("")}
+          </ul>
+          <a class="btn btn-outline" href="/resources-2/downloadable-forms/">Back to forms</a>
+        </div>
+        ${renderContactForm("Send form")}
       </div>
     </section>
   `;
@@ -736,7 +1660,7 @@ function renderApplicationPage(page) {
           <p class="lead">${page.subtitle}</p>
           <p>The form mirrors a recruitment or onboarding journey but does not transmit data.</p>
         </div>
-        ${renderContactForm("Send demo form")}
+        ${renderContactForm("Send form")}
       </div>
     </section>
   `;
@@ -762,7 +1686,7 @@ function renderOfficeList() {
 
 function renderContactForm(buttonText = "Send your message") {
   return `
-    <form class="contact-form" data-demo-form>
+    <form class="contact-form" data-local-form>
       <h2>Book a Meeting</h2>
       <div class="form-grid">
         <div class="field">
@@ -797,24 +1721,26 @@ function renderContactForm(buttonText = "Send your message") {
           </select>
         </div>
         <div class="field full">
-          <label for="services">Services of interest</label>
-          <select id="services" name="services">
-            <option>Accounts Compliance</option>
-            <option>Audit and Assurance</option>
-            <option>Business Advisory / Growth</option>
-            <option>Cloud Accounting</option>
-            <option>Payroll</option>
-            <option>Tax Planning</option>
-          </select>
+          <label>Services of interest <span class="field-hint">(select all that apply)</span></label>
+          <div class="service-checkboxes" id="serviceCheckboxes">
+            <label class="checkbox-label"><input type="checkbox" name="services" value="Business Growth"> Advisory &amp; Business Growth</label>
+            <label class="checkbox-label"><input type="checkbox" name="services" value="Tax"> Tax &amp; Planning</label>
+            <label class="checkbox-label"><input type="checkbox" name="services" value="Accounts"> Year-End Accounts</label>
+            <label class="checkbox-label"><input type="checkbox" name="services" value="Operations"> Bookkeeping, Payroll &amp; Secretarial</label>
+            <label class="checkbox-label"><input type="checkbox" name="services" value="Audits &amp; Assurance"> Audit &amp; Assurance</label>
+            <label class="checkbox-label"><input type="checkbox" name="services" value="Cloud Accounting"> Cloud Accounting</label>
+            <label class="checkbox-label"><input type="checkbox" name="services" value="Specialist Services"> Probate &amp; Estate</label>
+            <label class="checkbox-label"><input type="checkbox" name="services" value="Specialist Sectors"> Specialist Sector Advice</label>
+          </div>
         </div>
         <div class="field full">
           <label for="message">Comments or message</label>
           <textarea id="message" name="message" placeholder="Tell us what you would like help with"></textarea>
         </div>
       </div>
-      <label><input type="checkbox" required> I consent to this demo site showing a local confirmation message.</label>
+      <label><input type="checkbox" required> I understand this portfolio form shows a local confirmation message only.</label>
       <button class="btn btn-copper" type="submit">${buttonText}</button>
-      <p class="form-notice" hidden>Demo form complete. No message was sent.</p>
+      <p class="form-notice" hidden>Form complete. No message was sent.</p>
     </form>
   `;
 }
@@ -824,20 +1750,107 @@ function renderResourceCard(card) {
     <article class="resource-card">
       <h3>${card.title}</h3>
       <p>${card.copy}</p>
-      <a class="btn btn-copper" href="${card.path}">View page</a>
+      <a class="btn btn-copper" href="${card.path}">${card.button || "View page"}</a>
     </article>
   `;
 }
 
-function renderCtaSection() {
+function renderCtaSection(contactUrl = "/contact-us/#contact") {
   return `
     <section class="section section-copper">
       <div class="container cta-band">
         <div>
           <h2>Ready to make the first step?</h2>
-          <p>Book a demo introductory meeting with placeholder details.</p>
+          <p>Book an introductory meeting using the sample contact details.</p>
         </div>
-        <a class="btn btn-light" href="/contact-us/#contact">Book a meeting</a>
+        <a class="btn btn-light" href="${contactUrl}">Book a meeting</a>
+      </div>
+    </section>
+  `;
+}
+
+function renderBlogArticlePage(page) {
+  const { content } = page;
+  return `
+    <section class="page-hero" ${heroStyle(page.image)}>
+      <div class="container">
+        <div class="breadcrumb"><a href="/">Home</a> / <a href="/blog/">Blog</a> / ${content.category}</div>
+        <p class="eyebrow">${content.category}</p>
+        <h1>${page.title}</h1>
+        <p>${page.subtitle}</p>
+        <p style="margin-top:6px;font-size:13px;opacity:.75">${content.date}${content.readTime ? ` | Estimated read time: ${content.readTime}` : ""}</p>
+      </div>
+    </section>
+    <section class="section section-white">
+      <div class="narrow">
+        <p class="lead">${content.intro}</p>
+        ${content.sections.map((s) => `
+          <div style="margin-top:38px">
+            <h2>${s.heading}</h2>
+            <p>${s.body}</p>
+          </div>
+        `).join("")}
+        <div class="info-card" style="margin-top:52px">
+          <h3>Sources</h3>
+          <ul style="margin:14px 0 0;padding-left:20px">
+            ${content.sources.map((src) => `<li style="margin:8px 0"><a href="${src.url}" target="_blank" rel="noopener noreferrer" style="color:var(--copper);font-weight:700;text-decoration:underline">${src.label}</a></li>`).join("")}
+          </ul>
+        </div>
+      </div>
+    </section>
+    ${renderCtaSection()}
+  `;
+}
+
+function renderNewsArticlePage(page) {
+  const { content } = page;
+  const contactPath = `/contact-us/?topic=${encodeURIComponent(page.title)}#contact`;
+
+  return `
+    <section class="page-hero" ${heroStyle(page.image)}>
+      <div class="container">
+        <div class="breadcrumb"><a href="/">Home</a> / <a href="/resources-2/news-and-reports/">News and Reports</a> / ${content.category}</div>
+        <p class="eyebrow">${content.category}</p>
+        <h1>${page.title}</h1>
+        <p>${page.subtitle}</p>
+        <p style="margin-top:6px;font-size:13px;opacity:.75">${content.date}${content.readTime ? ` | Estimated read time: ${content.readTime}` : ""}</p>
+      </div>
+    </section>
+    <section class="section section-white">
+      <div class="narrow">
+        <p class="lead">${content.intro}</p>
+        ${content.html || content.sections.map((section) => `
+          <div style="margin-top:38px">
+            <h2>${section.heading}</h2>
+            <p>${section.body}</p>
+          </div>
+        `).join("")}
+        <div class="info-card" style="margin-top:52px">
+          <p class="eyebrow">Related support</p>
+          <h3>${content.service.label}</h3>
+          <p>${content.service.copy}</p>
+          <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:20px">
+            <a class="btn btn-copper" href="${content.service.path}">View service</a>
+            <a class="btn btn-outline" href="${contactPath}">Book a consultation</a>
+          </div>
+        </div>
+        ${content.faq?.length ? `
+          <div style="margin-top:52px">
+            <p class="eyebrow">FAQ</p>
+            <h2>Frequently asked questions</h2>
+            <div class="timeline">
+              ${content.faq.map((item) => `<article class="timeline-item"><strong>${item.question}</strong><span>${item.answer}</span></article>`).join("")}
+            </div>
+          </div>
+        ` : ""}
+        ${content.sources?.length ? `
+          <div class="info-card" style="margin-top:28px">
+            <h3>Reference links</h3>
+            <ul style="margin:14px 0 0;padding-left:20px">
+              ${content.sources.map((src) => `<li style="margin:8px 0"><a href="${src.url}" target="_blank" rel="noopener noreferrer" style="color:var(--copper);font-weight:700;text-decoration:underline">${src.label}</a></li>`).join("")}
+            </ul>
+          </div>
+        ` : ""}
       </div>
     </section>
   `;
@@ -854,24 +1867,52 @@ function renderPageContent(page) {
   if (page.type === "careers") return renderCareersPage(page);
   if (page.type === "reviews") return renderReviewsPage(page);
   if (page.type === "contact") return renderContactPage(page);
-  if (page.type === "resources" || page.type === "resource-list" || page.type === "factsheets" || page.type === "forms" || page.type === "media" || page.type === "newsletter") return renderResourcesPage(page);
+  if (page.type === "resources") return renderResourcesPage(page);
+  if (page.type === "resource-list") return renderNewsReportsPage(page);
+  if (page.type === "factsheets") return renderFactsheetsPage(page);
+  if (page.type === "forms") return renderFormsPage(page);
+  if (page.type === "media") return renderMediaPage(page);
+  if (page.type === "newsletter") return renderNewsletterPage(page);
+  if (page.type === "rates") return renderRatesPage(page);
   if (page.type === "calculators") return renderCalculatorsPage(page);
   if (page.type === "calculator") return renderCalculatorPage(page);
   if (page.type === "blog") return renderBlogPage(page);
+  if (page.type === "blog-article") return renderBlogArticlePage(page);
+  if (page.type === "news-article") return renderNewsArticlePage(page);
   if (page.type === "location") return renderLocationPage(page);
   if (page.type === "calendar") return renderCalendarPage(page);
+  if (page.type === "resource-form") return renderResourceFormPage(page);
   if (page.type === "application" || page.type === "client-form") return renderApplicationPage(page);
   return renderGenericPage(page);
 }
 
 function renderHtml(page) {
+  const canonicalPath = canonicals[page.path] || page.path;
+  const canonicalUrl = `${site.siteUrl}${normalize(canonicalPath)}`;
+  const ogImage = page.image || site.images.office;
+  const titleText = page.metaTitle || `${page.title} | ${site.brand}`;
+  const descText = page.metaDescription || page.subtitle || site.strapline;
+  const ogTitle = escapeHtml(titleText);
+  const ogDesc = escapeHtml(descText);
   return `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>${escapeHtml(page.title)} | ${site.brand}</title>
-    <meta name="description" content="${escapeHtml(page.subtitle || site.strapline)}">
+    <title>${ogTitle}</title>
+    <meta name="description" content="${ogDesc}">
+    <link rel="canonical" href="${canonicalUrl}">
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="${escapeHtml(site.brand)}">
+    <meta property="og:title" content="${ogTitle}">
+    <meta property="og:description" content="${ogDesc}">
+    <meta property="og:url" content="${canonicalUrl}">
+    <meta property="og:image" content="${ogImage}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="${ogTitle}">
+    <meta name="twitter:description" content="${ogDesc}">
+    <meta name="twitter:image" content="${ogImage}">
     <link rel="stylesheet" href="/assets/styles.css">
   </head>
   <body>
@@ -890,7 +1931,7 @@ async function writePage(page) {
   const cleanPath = normalize(page.path);
   const file = cleanPath === "/" ? join(root, "index.html") : join(root, cleanPath.replace(/^\/|\/$/g, ""), "index.html");
   await mkdir(dirname(file), { recursive: true });
-  await writeFile(file, renderHtml(page), "utf8");
+  await writeFile(file, removeVisibleDashes(renderHtml(page)), "utf8");
 }
 
 const byPath = new Map();

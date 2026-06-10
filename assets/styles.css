@@ -173,10 +173,10 @@ textarea {
   z-index: 30;
   transform: translateX(-50%);
   min-width: 250px;
-  padding: 20px;
+  padding: 22px 24px;
   background: var(--white);
   color: var(--ink);
-  border-top: 4px solid var(--copper);
+  border-top: 3px solid var(--copper);
   box-shadow: var(--shadow);
   opacity: 0;
   pointer-events: none;
@@ -195,15 +195,17 @@ textarea {
 .submenu-list a,
 .mega-column a {
   display: block;
-  padding: 7px 0;
+  padding: 6px 0;
   color: var(--ink);
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: color 120ms ease, padding-left 120ms ease;
 }
 
 .submenu-list a:hover,
 .mega-column a:hover {
   color: var(--copper);
+  padding-left: 5px;
 }
 
 .mega-menu {
@@ -221,15 +223,27 @@ textarea {
 .mega-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(160px, 1fr));
-  gap: 18px 26px;
+  gap: 0;
+}
+
+.mega-column {
+  padding: 0 24px;
+  border-left: 1px solid rgba(6, 26, 45, 0.1);
+}
+
+.mega-column:first-child {
+  padding-left: 0;
+  border-left: none;
 }
 
 .mega-column-title {
-  margin: 0 0 8px;
+  margin: 0 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid rgba(183, 91, 62, 0.25);
   color: var(--copper);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 900;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -618,6 +632,96 @@ p {
   box-shadow: none;
 }
 
+.services-intro {
+  border-bottom: 1px solid var(--line);
+}
+
+.service-family-section {
+  border-bottom: 1px solid var(--line);
+}
+
+.service-family {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.36fr) minmax(0, 1fr);
+  gap: clamp(32px, 6vw, 74px);
+  align-items: start;
+}
+
+.service-family-heading {
+  position: relative;
+  padding-top: 8px;
+}
+
+.service-family-number {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin-bottom: 22px;
+  border-radius: 4px;
+  background: var(--copper);
+  color: var(--white);
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.service-family-heading h2 {
+  margin-bottom: 16px;
+}
+
+.service-family-heading p:last-child {
+  color: var(--muted);
+  font-size: 18px;
+}
+
+.service-family-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.service-overview-card {
+  display: grid;
+  gap: 12px;
+  min-height: 170px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--white);
+  box-shadow: 0 14px 28px rgba(6, 26, 45, 0.07);
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.section-white .service-overview-card {
+  background: #fbfaf7;
+}
+
+.service-overview-card:hover {
+  border-color: rgba(183, 91, 62, 0.45);
+  box-shadow: 0 22px 38px rgba(6, 26, 45, 0.12);
+  transform: translateY(-2px);
+}
+
+.service-card-title {
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.service-card-copy {
+  color: var(--muted);
+}
+
+.service-card-action {
+  align-self: end;
+  color: var(--copper);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
 .why-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -787,6 +891,69 @@ textarea {
   font-weight: 800;
 }
 
+.field-hint {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+.service-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px 10px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #fbfbf9;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+  transition: background 120ms ease, color 120ms ease;
+  border: 1px solid transparent;
+}
+
+.checkbox-label:hover {
+  background: rgba(183, 91, 62, 0.07);
+}
+
+.checkbox-label:has(input:checked),
+.checkbox-label.is-preselected {
+  background: rgba(183, 91, 62, 0.11);
+  border-color: rgba(183, 91, 62, 0.3);
+  color: var(--copper-dark);
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  flex-shrink: 0;
+  accent-color: var(--copper);
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+}
+
+@media (max-width: 520px) {
+  .service-checkboxes {
+    grid-template-columns: 1fr;
+  }
+}
+
 .office-list {
   display: grid;
   gap: 16px;
@@ -810,6 +977,43 @@ textarea {
   text-transform: uppercase;
 }
 
+.calculator-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.72fr) minmax(0, 1.28fr);
+  gap: clamp(30px, 5vw, 64px);
+  align-items: start;
+}
+
+.calculator-copy {
+  position: sticky;
+  top: 110px;
+}
+
+.calc-notes {
+  display: grid;
+  gap: 10px;
+  margin: 20px 0 26px;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
+}
+
+.calc-notes li {
+  position: relative;
+  padding-left: 18px;
+}
+
+.calc-notes li::before {
+  content: "";
+  position: absolute;
+  top: 0.75em;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--copper);
+}
+
 .calc-tool {
   display: grid;
   gap: 18px;
@@ -820,13 +1024,40 @@ textarea {
   box-shadow: var(--shadow);
 }
 
+.calc-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
 .calc-result {
-  padding: 18px;
+  display: grid;
+  gap: 12px;
+  padding: 22px;
   border-radius: 4px;
   background: var(--ink);
   color: var(--white);
-  font-size: 19px;
-  font-weight: 800;
+}
+
+.calc-result strong {
+  display: block;
+  font-size: clamp(20px, 2vw, 28px);
+  line-height: 1.15;
+}
+
+.calc-result ul {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 700;
+}
+
+.calc-result li {
+  padding-top: 7px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .timeline {
@@ -962,6 +1193,18 @@ textarea {
 
   .mega-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 0;
+  }
+
+  .mega-column {
+    padding: 0 0 0 16px;
+    border-left: 2px solid rgba(183, 91, 62, 0.22);
+  }
+
+  .mega-column:first-child,
+  .mega-column:nth-child(2) {
+    padding-left: 16px;
+    border-left: 2px solid rgba(183, 91, 62, 0.22);
   }
 }
 
@@ -1014,6 +1257,8 @@ textarea {
   }
 
   .service-grid,
+  .service-family,
+  .service-family-grid,
   .feature-grid,
   .card-grid,
   .team-grid,
@@ -1022,10 +1267,16 @@ textarea {
   .why-grid,
   .office-row,
   .contact-layout,
+  .calculator-layout,
+  .calc-fields,
   .footer-main,
   .split,
   .split.reverse {
     grid-template-columns: 1fr;
+  }
+
+  .calculator-copy {
+    position: static;
   }
 
   .split.reverse .split-media {
