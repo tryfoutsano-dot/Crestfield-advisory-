@@ -780,25 +780,167 @@ function renderRatesPage(page) {
 }
 
 function renderAboutOverviewPage(page) {
-  const cards = [
-    { title: "Who are we?", path: "/who-we-are/", copy: "The practice story, approach and values." },
-    { title: "Meet the Team", path: "/meet-the-team/", copy: "A portfolio team grid with adviser profiles." },
-    { title: "Careers", path: "/careers/", copy: "Recruitment, team values and the application journey." },
-    { title: "Corporate and Social Responsibility", path: "/corporate-and-social-responsibility/", copy: "Community, sustainability and responsible-business content." }
+  const values = [
+    ["Quality Service", "Reliable work, thoughtful review and consistent standards across every engagement, from a first set of accounts to a complex restructure."],
+    ["Enthusiasm", "A team culture that treats learning as part of the job. Junior staff get mentoring and varied work; senior staff stay hands-on."],
+    ["Smart Working", "Cloud-first workflows through Xero and QuickBooks, flexible client communication and processes built around clear outputs."],
+    ["Teamwork", "Direct access to the adviser who knows your file. We share knowledge across the practice and keep handoffs to a minimum."]
   ];
+
+  const subPages = [
+    { title: "Who are we?", path: "/who-we-are/", copy: "The practice story, founding approach and the values that shape every client relationship." },
+    { title: "Meet the Team", path: "/meet-the-team/", copy: "Partner and director profiles with areas of specialism and direct contact routes." },
+    { title: "Careers", path: "/careers/", copy: "Open roles, team culture, study support and a look at the application journey." },
+    { title: "Corporate & Social Responsibility", path: "/corporate-and-social-responsibility/", copy: "Community work, sustainability commitments and responsible business practice." }
+  ];
+
+  const featured = teamMembers.slice(0, 3);
 
   return `
     ${renderPageHero(page)}
-    <section class="section section-white">
+
+    <section class="section section-navy">
       <div class="container center">
         <p class="eyebrow">About ${site.brand}</p>
-        <h2>Everything about the practice in one place</h2>
-        <p class="lead">This overview page makes the top-level About Us navigation item clickable while keeping the dropdown for direct access.</p>
-        <div class="resource-grid" style="margin-top:38px">
-          ${cards.map(renderResourceCard).join("")}
+        <h2>Chartered accountants and advisers who stay involved</h2>
+        <p class="lead" style="max-width:700px;margin:0 auto 52px">We started in compliance and grew into the advisory work our clients kept asking us to take on. Today the practice covers audit, tax, cloud accounting and business advisory across four offices in the south of England and London.</p>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px;max-width:820px;margin:0 auto">
+          ${[
+            ["4", "offices", "Chichester, London, Midhurst and Whiteley"],
+            ["15+", "core services", "Across tax, accounts, audit and advisory"],
+            ["4", "service families", "Advisory, Tax, Accounts and Audit & Specialist"]
+          ].map(([num, label, sub]) => `
+            <div style="padding:32px 20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14)">
+              <p style="margin:0 0 4px;font-size:clamp(44px,5vw,64px);font-weight:900;line-height:1;color:#f1a086">${num}</p>
+              <p style="margin:0 0 8px;font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.9)">${label}</p>
+              <p style="margin:0;font-size:13px;color:rgba(255,255,255,.58)">${sub}</p>
+            </div>
+          `).join("")}
         </div>
       </div>
     </section>
+
+    <section class="section section-white">
+      <div class="container split">
+        <div>
+          <p class="eyebrow">Our heritage</p>
+          <h2>Grown from compliance into full-service advisory</h2>
+          <p>${site.brand} was built by accountants who wanted to do more than file returns. The practice grew from a compliance base into advisory, cloud accounting, audit assurance and specialist tax work as clients asked for joined-up support across their financial affairs.</p>
+          <p>The name reflects the ambition: advice that stands above the immediate problem and looks at the whole picture. Every engagement starts with listening, whether it is a first set of accounts or a complex share restructure.</p>
+          <a class="btn btn-copper" href="/who-we-are/">Read our full story</a>
+        </div>
+        <div class="split-media">
+          <img src="${site.images.office}" alt="${site.brand} practice" loading="lazy">
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-paper">
+      <div class="container split reverse">
+        <div>
+          <p class="eyebrow">How we work</p>
+          <h2>Senior-led, clear and early to raise points</h2>
+          <p>The person who scopes an engagement is the person who does the work. We do not hand off client relationships to junior staff once the matter is open. That means faster decisions, fewer repeated conversations and advice that builds on what the adviser already knows about your situation.</p>
+          <ul class="check-list">
+            <li>Senior adviser involvement from scoping through to sign-off</li>
+            <li>Recommendations explained in language that supports real decisions</li>
+            <li>Planning points raised while there is still time to act</li>
+            <li>Cloud-first workflow through Xero and QuickBooks for faster reporting</li>
+          </ul>
+        </div>
+        <div class="split-media">
+          <img src="${site.images.meeting}" alt="Client meeting at ${site.brand}" loading="lazy">
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-navy">
+      <div class="container center">
+        <p class="eyebrow">What drives us</p>
+        <h2>Four values, every engagement</h2>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:38px;text-align:left">
+          ${values.map(([title, copy]) => `
+            <article class="feature-card">
+              <h3>${title}</h3>
+              <p>${copy}</p>
+            </article>
+          `).join("")}
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-white">
+      <div class="container">
+        <div class="center" style="margin-bottom:38px">
+          <p class="eyebrow">Who you work with</p>
+          <h2>Directors and specialists, not account managers</h2>
+          <p class="lead">Our practice is structured around specialist directors who stay close to client work from first conversation to final sign-off.</p>
+        </div>
+        <div class="team-grid">
+          ${featured.map((m) => `
+            <article class="team-card">
+              <img src="${m.image}" alt="${m.name}" loading="lazy">
+              <div class="team-card-body">
+                <p>${m.role}</p>
+                <h3>${m.name}</h3>
+              </div>
+            </article>
+          `).join("")}
+        </div>
+        <div class="center" style="margin-top:34px">
+          <a class="btn btn-copper" href="/meet-the-team/">Meet the whole team</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-copper">
+      <div class="narrow center">
+        <p class="eyebrow">What clients say</p>
+        <p style="font-size:clamp(22px,2.8vw,36px);font-weight:700;line-height:1.28;margin:16px 0 20px">&ldquo;They turned our management accounts into a reporting routine the directors could actually use.&rdquo;</p>
+        <p style="font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;opacity:.82">Client review &mdash; Virtual Finance Director engagement</p>
+        <div style="margin-top:30px">
+          <a class="btn btn-light" href="/reviews/">Read more reviews</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-paper">
+      <div class="container">
+        <div class="center" style="margin-bottom:38px">
+          <p class="eyebrow">Four offices, one team</p>
+          <h2>Chichester &middot; London &middot; Midhurst &middot; Whiteley</h2>
+          <p class="lead">Each office is staffed by the same practice, sharing knowledge and working to the same standards.</p>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:20px">
+          ${offices.map((office) => `
+            <a class="feature-card" href="${office.path}" style="display:block;padding:28px;text-decoration:none">
+              <p class="eyebrow" style="margin-bottom:10px">Office</p>
+              <h3 style="margin-bottom:8px">${office.name}</h3>
+              <p style="margin:0 0 6px;font-size:14px;color:var(--muted)">${office.address}</p>
+              <p style="margin:0;font-weight:900;color:var(--copper);font-size:14px">${office.phone}</p>
+            </a>
+          `).join("")}
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-white">
+      <div class="container center">
+        <p class="eyebrow">Go deeper</p>
+        <h2>Explore the full picture</h2>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:38px;text-align:left">
+          ${subPages.map((card) => `
+            <article class="resource-card">
+              <h3>${card.title}</h3>
+              <p>${card.copy}</p>
+              <a class="btn btn-copper" href="${card.path}">View page</a>
+            </article>
+          `).join("")}
+        </div>
+      </div>
+    </section>
+
+    ${renderCtaSection()}
   `;
 }
 
