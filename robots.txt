@@ -34,4 +34,4 @@ Disallow: /assets/*.css
 Disallow: /assets/*.js
 
 # Sitemap location
-Sitemap: https://crestfield.example/sitemap.xml
+Sitemap: https://crestfield-advisory.vercel.app/sitemap.xml

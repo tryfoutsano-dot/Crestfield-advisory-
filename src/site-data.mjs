@@ -9,7 +9,7 @@ export const site = {
   email: "hello@crestfield.example",
   year: "2026",
   address: "Portfolio House, 10 Portfolio Street, London, EC1A 1AA",
-  siteUrl: "https://crestfield.example",
+  siteUrl: "https://crestfield-advisory.vercel.app",
   social: {
     linkedin: "https://www.linkedin.com/company/crestfield-advisory",
     twitter: "https://x.com/crestfieldadvisory"

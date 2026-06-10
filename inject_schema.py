@@ -22,8 +22,7 @@ It will:
 3. Print a summary of what was processed.
 
 BEFORE RUNNING:
-    Replace every occurrence of "crestfield.example" with your real domain.
-    Update the address, telephone, and social profile URLs below.
+    Update the address, telephone, email, and social profile URLs below.
 """
 
 import json
@@ -34,7 +33,7 @@ from pathlib import Path
 # ─── CONFIGURATION ────────────────────────────────────────────────────────────
 # Update these values before running on a real client site.
 
-DOMAIN = "https://crestfield.example"   # e.g. "https://www.lewisbrownlee.co.uk"
+DOMAIN = "https://crestfield-advisory.vercel.app"
 SITE_NAME = "Crestfield Advisory"
 LOGO_URL = f"{DOMAIN}/assets/favicon.svg"
 CONTACT_EMAIL = "hello@crestfield.example"
@@ -419,11 +418,10 @@ def main():
         print(f"  {k:16s}: {v}")
     print("=" * 60)
     print("\nNext steps:")
-    print("  1. Replace 'crestfield.example' in this script with the real domain.")
-    print("  2. Update OFFICES addresses, phone numbers and email.")
-    print("  3. Copy sitemap.xml and robots.txt to the site root.")
-    print("  4. Submit sitemap in Google Search Console.")
-    print("  5. Validate schema with: https://validator.schema.org/")
+    print("  1. Update OFFICES addresses, phone numbers and email.")
+    print("  2. Copy sitemap.xml and robots.txt to the site root.")
+    print("  3. Submit sitemap in Google Search Console.")
+    print("  4. Validate schema with: https://validator.schema.org/")
 
 
 if __name__ == "__main__":

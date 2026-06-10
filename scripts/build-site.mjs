@@ -2163,7 +2163,7 @@ for (const page of pages) {
 await Promise.all([...byPath.values()].map(writePage));
 
 const sitemap = [...byPath.values()]
-  .map((page) => `https://portfolio.example${normalize(page.path)}`)
+  .map((page) => `${site.siteUrl}${normalize(page.path)}`)
   .join("\n");
 await writeFile(join(root, "generated-pages.txt"), sitemap, "utf8");
 
