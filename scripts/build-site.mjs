@@ -297,8 +297,11 @@ function renderPageHero(page) {
 
 function renderServicePage(page) {
   const contactUrl = `/contact-us/?service=${encodeURIComponent(page.area)}#contact`;
+  const safeTitle = page.title.toLowerCase().replace(/&/g, "and");
+
   return `
     ${renderPageHero(page)}
+
     <section class="section section-white">
       <div class="container split">
         <div>
@@ -307,36 +310,88 @@ function renderServicePage(page) {
           <p class="lead">${page.subtitle}</p>
           <p>${page.body}</p>
           <ul class="check-list">
-            ${page.features.map((feature) => `<li>${feature}</li>`).join("")}
+            ${page.features.map((f) => `<li>${f}</li>`).join("")}
           </ul>
           <a class="btn btn-copper" href="${contactUrl}">Talk to a specialist</a>
         </div>
         <div class="split-media">
-          <img src="${page.image}" alt="${page.title} advisory services" loading="lazy">
+          <img src="${page.image}" alt="${page.title} — Crestfield Advisory" loading="lazy">
         </div>
       </div>
     </section>
+
     <section class="section section-paper">
       <div class="container center">
-        <p class="eyebrow">How we work</p>
-        <h2>What to expect when you work with us</h2>
-        <div class="feature-grid">
-          ${[
-            ["Senior-led throughout", "The person who scopes the engagement is the person who does the work. No handoffs to junior staff."],
-            ["Straightforward advice", "Recommendations are explained in language that supports decisions and technical compliance."],
-            ["Early planning", "We raise planning points and flag issues while there is still time to act."]
-          ]
-            .map(([title, copy]) => `<article class="feature-card"><h3>${title}</h3><p>${copy}</p></article>`)
-            .join("")}
+        <p class="eyebrow">Our approach</p>
+        <h2>How we deliver ${safeTitle}</h2>
+        <div class="process-steps">
+          ${page.process.map(([num, title, copy]) => `
+            <div class="process-step">
+              <span class="process-step-num">${num}</span>
+              <h3>${title}</h3>
+              <p>${copy}</p>
+            </div>
+          `).join("")}
         </div>
       </div>
     </section>
+
+    ${page.clientTypes && page.clientTypes.length ? `
+    <section class="section section-white">
+      <div class="container center">
+        <p class="eyebrow">Who this is for</p>
+        <h2>Businesses and individuals that need</h2>
+        <div class="client-types-grid">
+          ${page.clientTypes.map(([num, title, copy]) => `
+            <div class="client-type-card">
+              <p style="font-size:13px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--copper);margin:0 0 12px">${num}</p>
+              <h3>${title}</h3>
+              <p style="margin:0;color:var(--muted)">${copy}</p>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    </section>
+    ` : ""}
+
+    ${page.testimonial ? `
+    <section class="section section-copper">
+      <div class="narrow center">
+        <p class="eyebrow">Client feedback</p>
+        <p style="font-size:clamp(20px,2.4vw,30px);font-weight:700;line-height:1.3;margin:16px 0 22px">&ldquo;${page.testimonial.quote}&rdquo;</p>
+        <p style="font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;opacity:.82">${page.testimonial.attribution}</p>
+        <div style="margin-top:28px">
+          <a class="btn btn-light" href="${contactUrl}">Book a meeting</a>
+        </div>
+      </div>
+    </section>
+    ` : ""}
+
+    ${page.faq && page.faq.length ? `
+    <section class="section section-paper">
+      <div class="container">
+        <div class="center">
+          <p class="eyebrow">Common questions</p>
+          <h2>Frequently asked questions</h2>
+        </div>
+        <div class="faq-list">
+          ${page.faq.map(({ q, a }) => `
+            <details class="faq-item">
+              <summary>${q}</summary>
+              <div class="faq-answer"><p>${a}</p></div>
+            </details>
+          `).join("")}
+        </div>
+      </div>
+    </section>
+    ` : ""}
+
     <section class="section section-navy">
       <div class="container">
         <div class="cta-band">
           <div>
-            <h2>Ready to make the next step?</h2>
-            <p>Book an introductory meeting using the sample contact details on this portfolio site.</p>
+            <h2>Ready to take the next step?</h2>
+            <p>Book an introductory meeting to discuss your ${page.area.toLowerCase()} needs with a specialist.</p>
           </div>
           <a class="btn btn-light" href="${contactUrl}">Book a meeting</a>
         </div>
